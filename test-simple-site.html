@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Site Test</title>
+</head>
+<body>
+    <h2>Testing if main website syntax works:</h2>
+    
+    <script type="module">
+        console.log('Starting import test...')
+        
+        try {
+            // Same import as main site
+            import { h1, h2, h3, p, div, button, input, img } from './lib/src/simplest.js'
+            import { state } from './lib/src/state.js'
+            
+            console.log('✅ Imports successful!')
+            
+            // Try the same code as the main site
+            h1('TEST: Natural Syntax from Main Site', { 
+                color: 'green',
+                center: true 
+            })
+            
+            p('If you see this heading above, the main site syntax SHOULD work!')
+            
+            // Test a simple interactive element
+            button('Test Button', {
+                primary: true,
+                onClick: () => {
+                    p('✅ Main site syntax confirmed working!', { 
+                        color: 'blue',
+                        bold: true 
+                    })
+                }
+            })
+            
+        } catch (error) {
+            console.error('❌ Import or execution failed:', error)
+            document.body.innerHTML += `<p style="color: red; font-weight: bold;">ERROR: ${error.message}</p>`
+        }
+    </script>
+</body>
+</html>

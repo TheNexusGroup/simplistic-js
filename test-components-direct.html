@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Components Direct Test</title>
+</head>
+<body>
+    <h1>Testing Components.js Import</h1>
+    <div id="output"></div>
+    
+    <script type="module">
+        const output = document.getElementById('output');
+        
+        try {
+            console.log('Testing components.js import...');
+            output.innerHTML += '<p>Testing components.js import...</p>';
+            
+            // Test importing from correct path
+            const { navigation, hero, footer } = await import('./site/components.js');
+            console.log('Components import successful!', { navigation, hero, footer });
+            output.innerHTML += '<p style="color: green;">✅ Components import successful!</p>';
+            
+            // Test creating navigation
+            console.log('Testing navigation...');
+            navigation('test');
+            output.innerHTML += '<p style="color: green;">✅ Navigation created successfully!</p>';
+            
+        } catch (error) {
+            console.error('Components import error:', error);
+            output.innerHTML += `<p style="color: red;">❌ Error: ${error.message}</p>`;
+            output.innerHTML += `<p style="color: red;">Stack: ${error.stack}</p>`;
+        }
+    </script>
+</body>
+</html>

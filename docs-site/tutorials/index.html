@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Tutorial - Simplest.js</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .tutorial-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .step-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 30px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .code-editor {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 14px;
+            color: #e1e1e1;
+            margin: 20px 0;
+            border: 2px solid #333;
+        }
+        
+        .output-area {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            min-height: 200px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+        
+        .step-number {
+            background: #2563eb;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: #22c55e;
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="tutorial-container">
+        <script type="module">
+            import { app, h1, h2, h3, p, div, button, input } from '../../lib/src/simplest.js'
+            import { state } from '../../lib/src/state.js'
+
+            app(() => {
+                const currentStep = state(0)
+                const steps = [
+                    {
+                        title: "Welcome to Simplest.js!",
+                        description: "Let's learn natural web development step by step.",
+                        code: `// Welcome! Click 'Next' to start learning`,
+                        task: "Click the Next button to begin"
+                    },
+                    {
+                        title: "Your First Element",
+                        description: "Create elements by simply calling their function.",
+                        code: `h1('Hello, Simplest.js!')`,
+                        task: "Watch as we create your first heading"
+                    },
+                    {
+                        title: "Add Some Style",
+                        description: "Style elements with intuitive properties - no CSS needed!",
+                        code: `h1('Styled Heading', {
+    color: 'blue',
+    center: true,
+    size: 36
+})
+
+p('This text is styled too!', {
+    color: '#64748b',
+    italic: true
+})`,
+                        task: "See how natural styling works"
+                    },
+                    {
+                        title: "Layout Made Simple",
+                        description: "Create layouts with row, col, gap, and center properties.",
+                        code: `div({ row: true, gap: 20, center: true },
+    div({ 
+        bg: '#dbeafe', 
+        pad: 20, 
+        rounded: 12,
+        center: true
+    },
+        h3('Box 1', { color: '#1e40af' })
+    ),
+    div({ 
+        bg: '#dcfce7', 
+        pad: 20, 
+        rounded: 12,
+        center: true
+    },
+        h3('Box 2', { color: '#166534' })
+    )
+)`,
+                        task: "Layout boxes side by side effortlessly"
+                    },
+                    {
+                        title: "Interactive Elements",
+                        description: "Add interactivity with simple event handlers.",
+                        code: `button('Click me!', {
+    primary: true,
+    onClick: () => alert('Hello from Simplest.js!')
+})
+
+input({
+    placeholder: 'Type something...',
+    onEnter: (value) => {
+        p(\`You typed: "\${value}"\`, { 
+            color: 'green',
+            margin: [10, 0, 0, 0]
+        })
+    }
+})`,
+                        task: "Try clicking the button and typing in the input"
+                    },
+                    {
+                        title: "Reactive State",
+                        description: "Create state that automatically updates your UI.",
+                        code: `import { state } from 'simplest-js/state'
+
+const count = state(0)
+
+// This text updates automatically
+p(\`Count: \${count.value}\`, { size: 24, bold: true })
+
+div({ row: true, gap: 15, center: true },
+    button('-', { 
+        onClick: () => count.value--,
+        bg: '#ef4444',
+        color: 'white' 
+    }),
+    button('+', { 
+        onClick: () => count.value++,
+        bg: '#22c55e',
+        color: 'white' 
+    })
+)`,
+                        task: "Click the buttons to see reactive state in action"
+                    },
+                    {
+                        title: "Lists and Arrays",
+                        description: "Work with dynamic lists using reactive arrays.",
+                        code: `const todos = state([
+    'Learn Simplest.js',
+    'Build something awesome'
+])
+
+input({
+    placeholder: 'Add a todo...',
+    onEnter: (text) => {
+        if (text.trim()) {
+            todos.push(text.trim())
+        }
+    }
+})
+
+// Each todo renders automatically
+todos.map(todo => 
+    div({ 
+        row: true, 
+        between: true,
+        pad: 15,
+        bg: '#f8fafc',
+        rounded: 8,
+        margin: [5, 0]
+    },
+        p(todo, { color: '#374151' }),
+        button('Done', { 
+            small: true,
+            onClick: () => todos.remove(todo)
+        })
+    )
+)`,
+                        task: "Add some todos and mark them as done"
+                    },
+                    {
+                        title: "Congratulations! 🎉",
+                        description: "You've learned the basics of Simplest.js! Ready to build something amazing?",
+                        code: `// You now know:
+// ✅ Element creation
+// ✅ Intuitive styling  
+// ✅ Layout systems
+// ✅ Event handling
+// ✅ Reactive state
+// ✅ Dynamic lists
+
+// Ready to build the next big thing!`,
+                        task: "Explore the examples or start your own project"
+                    }
+                ]
+                
+                // Header
+                div({ center: true, col: true, margin: [0, 0, 40, 0] },
+                    h1('🎓 Interactive Tutorial', { 
+                        size: 48, 
+                        center: true,
+                        margin: [0, 0, 20, 0]
+                    }),
+                    p('Learn Simplest.js by doing - step by step', {
+                        size: 18,
+                        center: true,
+                        color: 'rgba(255,255,255,0.8)'
+                    })
+                )
+                
+                // Progress bar
+                div({ 
+                    bg: 'rgba(255,255,255,0.2)',
+                    height: 8,
+                    rounded: 4,
+                    margin: [20, 0, 40, 0],
+                    className: 'progress-bar'
+                },
+                    (() => {
+                        const fill = div({
+                            bg: '#22c55e',
+                            height: '100%',
+                            rounded: 4,
+                            width: `${((currentStep.value) / (steps.length - 1)) * 100}%`,
+                            className: 'progress-fill'
+                        })
+                        
+                        currentStep.subscribe(step => {
+                            fill.style.width = `${(step / (steps.length - 1)) * 100}%`
+                        })
+                        
+                        return fill
+                    })()
+                )
+                
+                // Step indicator
+                (() => {
+                    const indicator = p('', {
+                        center: true,
+                        color: 'rgba(255,255,255,0.8)',
+                        margin: [0, 0, 30, 0]
+                    })
+                    
+                    currentStep.subscribe(step => {
+                        indicator.textContent = `Step ${step + 1} of ${steps.length}`
+                    })
+                    
+                    indicator.textContent = `Step ${currentStep.value + 1} of ${steps.length}`
+                    
+                    return indicator
+                })()
+                
+                // Current step content
+                (() => {
+                    const stepContainer = div({
+                        bg: 'rgba(255,255,255,0.1)',
+                        backdropFilter: 'blur(10px)',
+                        rounded: 16,
+                        pad: 40,
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        className: 'step-card'
+                    })
+                    
+                    const renderStep = () => {
+                        const step = steps[currentStep.value]
+                        stepContainer.innerHTML = ''
+                        
+                        // Step number
+                        const stepNum = div({
+                            bg: '#2563eb',
+                            color: 'white',
+                            width: 40,
+                            height: 40,
+                            rounded: '50%',
+                            center: true,
+                            bold: true,
+                            margin: [0, 0, 20, 0],
+                            className: 'step-number'
+                        })
+                        stepNum.textContent = (currentStep.value + 1).toString()
+                        stepContainer.appendChild(stepNum)
+                        
+                        // Title
+                        const title = h2(step.title, {
+                            margin: [0, 0, 15, 0],
+                            color: 'white'
+                        })
+                        stepContainer.appendChild(title)
+                        
+                        // Description
+                        const desc = p(step.description, {
+                            color: 'rgba(255,255,255,0.9)',
+                            size: 16,
+                            margin: [0, 0, 30, 0]
+                        })
+                        stepContainer.appendChild(desc)
+                        
+                        // Code editor
+                        const codeEditor = document.createElement('div')
+                        codeEditor.className = 'code-editor'
+                        codeEditor.textContent = step.code
+                        stepContainer.appendChild(codeEditor)
+                        
+                        // Task
+                        const task = p(`Task: ${step.task}`, {
+                            color: '#fbbf24',
+                            italic: true,
+                            margin: [20, 0, 30, 0]
+                        })
+                        stepContainer.appendChild(task)
+                        
+                        // Output area
+                        const outputArea = document.createElement('div')
+                        outputArea.className = 'output-area'
+                        
+                        // Execute the code for demonstration
+                        if (currentStep.value > 0) {
+                            try {
+                                // Create a temporary container for the demo
+                                const tempContainer = document.createElement('div')
+                                outputArea.appendChild(tempContainer)
+                                
+                                // Push the temp container to context stack for rendering
+                                const originalContext = window.getCurrentContext ? window.getCurrentContext() : document.body
+                                
+                                // Simple demo execution based on step
+                                switch(currentStep.value) {
+                                    case 1:
+                                        const h1Demo = document.createElement('h1')
+                                        h1Demo.textContent = 'Hello, Simplest.js!'
+                                        h1Demo.style.color = '#1f2937'
+                                        tempContainer.appendChild(h1Demo)
+                                        break
+                                        
+                                    case 2:
+                                        const styledH1 = document.createElement('h1')
+                                        styledH1.textContent = 'Styled Heading'
+                                        styledH1.style.color = 'blue'
+                                        styledH1.style.textAlign = 'center'
+                                        styledH1.style.fontSize = '36px'
+                                        tempContainer.appendChild(styledH1)
+                                        
+                                        const styledP = document.createElement('p')
+                                        styledP.textContent = 'This text is styled too!'
+                                        styledP.style.color = '#64748b'
+                                        styledP.style.fontStyle = 'italic'
+                                        tempContainer.appendChild(styledP)
+                                        break
+                                        
+                                    case 3:
+                                        const layout = document.createElement('div')
+                                        layout.style.display = 'flex'
+                                        layout.style.gap = '20px'
+                                        layout.style.justifyContent = 'center'
+                                        
+                                        const box1 = document.createElement('div')
+                                        box1.style.background = '#dbeafe'
+                                        box1.style.padding = '20px'
+                                        box1.style.borderRadius = '12px'
+                                        box1.style.textAlign = 'center'
+                                        box1.innerHTML = '<h3 style="color: #1e40af; margin: 0;">Box 1</h3>'
+                                        
+                                        const box2 = document.createElement('div')
+                                        box2.style.background = '#dcfce7'
+                                        box2.style.padding = '20px'
+                                        box2.style.borderRadius = '12px'
+                                        box2.style.textAlign = 'center'
+                                        box2.innerHTML = '<h3 style="color: #166534; margin: 0;">Box 2</h3>'
+                                        
+                                        layout.appendChild(box1)
+                                        layout.appendChild(box2)
+                                        tempContainer.appendChild(layout)
+                                        break
+                                        
+                                    case 4:
+                                        const demoButton = document.createElement('button')
+                                        demoButton.textContent = 'Click me!'
+                                        demoButton.style.background = '#2563eb'
+                                        demoButton.style.color = 'white'
+                                        demoButton.style.padding = '12px 24px'
+                                        demoButton.style.border = 'none'
+                                        demoButton.style.borderRadius = '8px'
+                                        demoButton.style.cursor = 'pointer'
+                                        demoButton.style.marginRight = '20px'
+                                        demoButton.onclick = () => alert('Hello from Simplest.js!')
+                                        
+                                        const demoInput = document.createElement('input')
+                                        demoInput.placeholder = 'Type something...'
+                                        demoInput.style.padding = '12px'
+                                        demoInput.style.border = '1px solid #ddd'
+                                        demoInput.style.borderRadius = '8px'
+                                        demoInput.style.marginRight = '20px'
+                                        
+                                        const responseDiv = document.createElement('div')
+                                        responseDiv.style.marginTop = '20px'
+                                        
+                                        demoInput.addEventListener('keydown', (e) => {
+                                            if (e.key === 'Enter') {
+                                                const response = document.createElement('p')
+                                                response.textContent = `You typed: "${e.target.value}"`
+                                                response.style.color = 'green'
+                                                response.style.margin = '10px 0 0 0'
+                                                responseDiv.appendChild(response)
+                                                e.target.value = ''
+                                            }
+                                        })
+                                        
+                                        tempContainer.appendChild(demoButton)
+                                        tempContainer.appendChild(demoInput)
+                                        tempContainer.appendChild(responseDiv)
+                                        break
+                                        
+                                    case 5:
+                                        // Counter demo
+                                        let count = 0
+                                        const counterDisplay = document.createElement('p')
+                                        counterDisplay.style.fontSize = '24px'
+                                        counterDisplay.style.fontWeight = 'bold'
+                                        counterDisplay.style.textAlign = 'center'
+                                        counterDisplay.style.margin = '20px 0'
+                                        
+                                        const updateCounter = () => {
+                                            counterDisplay.textContent = `Count: ${count}`
+                                        }
+                                        updateCounter()
+                                        
+                                        const buttonContainer = document.createElement('div')
+                                        buttonContainer.style.display = 'flex'
+                                        buttonContainer.style.gap = '15px'
+                                        buttonContainer.style.justifyContent = 'center'
+                                        
+                                        const minusBtn = document.createElement('button')
+                                        minusBtn.textContent = '-'
+                                        minusBtn.style.background = '#ef4444'
+                                        minusBtn.style.color = 'white'
+                                        minusBtn.style.padding = '12px 20px'
+                                        minusBtn.style.border = 'none'
+                                        minusBtn.style.borderRadius = '8px'
+                                        minusBtn.style.cursor = 'pointer'
+                                        minusBtn.onclick = () => { count--; updateCounter() }
+                                        
+                                        const plusBtn = document.createElement('button')
+                                        plusBtn.textContent = '+'
+                                        plusBtn.style.background = '#22c55e'
+                                        plusBtn.style.color = 'white'
+                                        plusBtn.style.padding = '12px 20px'
+                                        plusBtn.style.border = 'none'
+                                        plusBtn.style.borderRadius = '8px'
+                                        plusBtn.style.cursor = 'pointer'
+                                        plusBtn.onclick = () => { count++; updateCounter() }
+                                        
+                                        buttonContainer.appendChild(minusBtn)
+                                        buttonContainer.appendChild(plusBtn)
+                                        
+                                        tempContainer.appendChild(counterDisplay)
+                                        tempContainer.appendChild(buttonContainer)
+                                        break
+                                        
+                                    case 6:
+                                        // Todo demo
+                                        const todos = ['Learn Simplest.js', 'Build something awesome']
+                                        
+                                        const todoContainer = document.createElement('div')
+                                        
+                                        const todoInput = document.createElement('input')
+                                        todoInput.placeholder = 'Add a todo...'
+                                        todoInput.style.padding = '12px'
+                                        todoInput.style.border = '1px solid #ddd'
+                                        todoInput.style.borderRadius = '8px'
+                                        todoInput.style.width = '100%'
+                                        todoInput.style.marginBottom = '20px'
+                                        
+                                        const todoList = document.createElement('div')
+                                        
+                                        const renderTodos = () => {
+                                            todoList.innerHTML = ''
+                                            todos.forEach((todo, index) => {
+                                                const todoItem = document.createElement('div')
+                                                todoItem.style.display = 'flex'
+                                                todoItem.style.justifyContent = 'space-between'
+                                                todoItem.style.alignItems = 'center'
+                                                todoItem.style.padding = '15px'
+                                                todoItem.style.background = '#f8fafc'
+                                                todoItem.style.borderRadius = '8px'
+                                                todoItem.style.margin = '5px 0'
+                                                
+                                                const todoText = document.createElement('p')
+                                                todoText.textContent = todo
+                                                todoText.style.color = '#374151'
+                                                todoText.style.margin = '0'
+                                                
+                                                const doneBtn = document.createElement('button')
+                                                doneBtn.textContent = 'Done'
+                                                doneBtn.style.padding = '6px 12px'
+                                                doneBtn.style.background = '#ef4444'
+                                                doneBtn.style.color = 'white'
+                                                doneBtn.style.border = 'none'
+                                                doneBtn.style.borderRadius = '4px'
+                                                doneBtn.style.cursor = 'pointer'
+                                                doneBtn.onclick = () => {
+                                                    todos.splice(index, 1)
+                                                    renderTodos()
+                                                }
+                                                
+                                                todoItem.appendChild(todoText)
+                                                todoItem.appendChild(doneBtn)
+                                                todoList.appendChild(todoItem)
+                                            })
+                                        }
+                                        
+                                        todoInput.addEventListener('keydown', (e) => {
+                                            if (e.key === 'Enter' && e.target.value.trim()) {
+                                                todos.push(e.target.value.trim())
+                                                e.target.value = ''
+                                                renderTodos()
+                                            }
+                                        })
+                                        
+                                        renderTodos()
+                                        
+                                        todoContainer.appendChild(todoInput)
+                                        todoContainer.appendChild(todoList)
+                                        tempContainer.appendChild(todoContainer)
+                                        break
+                                        
+                                    default:
+                                        const welcomeMsg = document.createElement('div')
+                                        welcomeMsg.innerHTML = `
+                                            <h2 style="color: #1f2937; margin: 0 0 20px 0;">Ready to Start Learning?</h2>
+                                            <p style="color: #64748b; margin: 0;">Click the "Next" button below to begin your journey with Simplest.js!</p>
+                                        `
+                                        welcomeMsg.style.textAlign = 'center'
+                                        welcomeMsg.style.padding = '40px 20px'
+                                        tempContainer.appendChild(welcomeMsg)
+                                }
+                            } catch (error) {
+                                const errorMsg = document.createElement('p')
+                                errorMsg.textContent = 'Demo will appear here when you click Next!'
+                                errorMsg.style.color = '#64748b'
+                                errorMsg.style.textAlign = 'center'
+                                errorMsg.style.padding = '40px 20px'
+                                outputArea.appendChild(errorMsg)
+                            }
+                        } else {
+                            // Welcome step
+                            const welcomeDemo = document.createElement('div')
+                            welcomeDemo.innerHTML = `
+                                <h2 style="color: #1f2937; margin: 0 0 20px 0; text-align: center;">Ready to Start Learning?</h2>
+                                <p style="color: #64748b; margin: 0; text-align: center;">Click the "Next" button below to begin your journey with Simplest.js!</p>
+                            `
+                            welcomeDemo.style.padding = '40px 20px'
+                            outputArea.appendChild(welcomeDemo)
+                        }
+                        
+                        stepContainer.appendChild(outputArea)
+                    }
+                    
+                    currentStep.subscribe(renderStep)
+                    renderStep()
+                    
+                    return stepContainer
+                })()
+                
+                // Navigation buttons
+                div({ 
+                    row: true, 
+                    between: true,
+                    margin: [40, 0, 0, 0]
+                },
+                    button('← Previous', {
+                        ghost: true,
+                        color: 'white',
+                        border: '2px solid rgba(255,255,255,0.3)',
+                        onClick: () => {
+                            if (currentStep.value > 0) {
+                                currentStep.value--
+                            }
+                        },
+                        style: {
+                            opacity: currentStep.value === 0 ? 0.5 : 1
+                        }
+                    }),
+                    
+                    (() => {
+                        const nextBtn = button('Next →', {
+                            primary: true,
+                            bg: '#22c55e',
+                            onClick: () => {
+                                if (currentStep.value < steps.length - 1) {
+                                    currentStep.value++
+                                }
+                            }
+                        })
+                        
+                        currentStep.subscribe(step => {
+                            if (step === steps.length - 1) {
+                                nextBtn.textContent = '🎉 Finish'
+                                nextBtn.style.background = '#f59e0b'
+                                nextBtn.onclick = () => {
+                                    alert('Congratulations! You\'ve completed the tutorial. Ready to build something amazing?')
+                                    window.open('../examples/index.html', '_blank')
+                                }
+                            } else {
+                                nextBtn.textContent = 'Next →'
+                                nextBtn.style.background = '#22c55e'
+                            }
+                        })
+                        
+                        return nextBtn
+                    })()
+                )
+                
+                // Footer
+                div({ 
+                    center: true,
+                    margin: [60, 0, 20, 0]
+                },
+                    p('Need help? Check out our ', { 
+                        color: 'rgba(255,255,255,0.7)',
+                        margin: 0 
+                    }),
+                    button('Documentation', {
+                        bg: 'transparent',
+                        color: '#60a5fa',
+                        pad: 0,
+                        onClick: () => window.open('../docs/index.html', '_blank')
+                    }),
+                    p(' or ', { 
+                        color: 'rgba(255,255,255,0.7)',
+                        margin: 0 
+                    }),
+                    button('Examples', {
+                        bg: 'transparent',
+                        color: '#60a5fa',
+                        pad: 0,
+                        onClick: () => window.open('../examples/index.html', '_blank')
+                    })
+                )
+            })
+        </script>
+    </div>
+</body>
+</html>

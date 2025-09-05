@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Absolute Imports Test</title>
+</head>
+<body>
+    <h1>Testing Absolute Import URLs</h1>
+    <div id="output"></div>
+    
+    <script type="module">
+        const output = document.getElementById('output');
+        
+        try {
+            console.log('Testing absolute import URLs...');
+            output.innerHTML += '<p>Testing absolute import URLs...</p>';
+            
+            // Test importing with absolute URLs
+            const { h1, p, div, button } = await import('http://localhost:8080/lib/src/simplest-v2.js');
+            console.log('Simplest import successful!', { h1, p, div, button });
+            output.innerHTML += '<p style="color: green;">✅ Simplest import successful!</p>';
+            
+            const { state } = await import('http://localhost:8080/lib/src/state.js');
+            console.log('State import successful!', { state });
+            output.innerHTML += '<p style="color: green;">✅ State import successful!</p>';
+            
+            const { navigation } = await import('http://localhost:8080/site/components.js');
+            console.log('Components import successful!', { navigation });
+            output.innerHTML += '<p style="color: green;">✅ Components import successful!</p>';
+            
+            // Test creating elements
+            console.log('Testing element creation...');
+            h1('Test Header', { color: 'blue' });
+            p('Test paragraph', { margin: '10px 0' });
+            
+            output.innerHTML += '<p style="color: green;">✅ Element creation successful!</p>';
+            
+            // Test navigation
+            navigation('test');
+            output.innerHTML += '<p style="color: green;">✅ Navigation created!</p>';
+            
+        } catch (error) {
+            console.error('Absolute import error:', error);
+            output.innerHTML += `<p style="color: red;">❌ Error: ${error.message}</p>`;
+            output.innerHTML += `<p style="color: red;">Stack: ${error.stack}</p>`;
+        }
+    </script>
+</body>
+</html>

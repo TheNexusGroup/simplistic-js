@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial - Simplest.js</title>
+</head>
+<body>
+    <script type="module">
+        import { h1, h2, h3, p, div, button } from '../lib/src/simplest-v2.js';
+        import { state } from '../lib/src/state.js';
+        import { navigation, hero, footer } from './components.js';
+        
+        console.log('Starting tutorial...');
+        
+        navigation('tutorial');
+        hero('Getting Started Tutorial', 'Learn Simplest.js in 10 minutes');
+        
+        div({ maxWidth: 900, margin: '0 auto', pad: [40, 20] },
+            () => h2('Welcome to Simplest.js!'),
+            () => p('This tutorial will teach you the fundamentals. By the end, you will be able to build interactive web applications using natural JavaScript syntax.'),
+            
+            () => div({ margin: [40, 0] },
+                () => h3('Step 1: Installation'),
+                () => p('Create an HTML file and import the library:'),
+                () => div({
+                    bg: '#1a1a1a',
+                    color: '#e1e1e1',
+                    pad: 20,
+                    rounded: 8,
+                    fontFamily: 'monospace',
+                    margin: [20, 0]
+                },
+                    () => p('<script type="module">'),
+                    () => p('  import { h1, p } from "simplest-js"'),
+                    () => p('  h1("Hello World")'),
+                    () => p('<\/script>')
+                )
+            ),
+            
+            () => div({ margin: [40, 0] },
+                () => h3('Step 2: Creating Elements'),
+                () => p('Elements appear as you write them:'),
+                () => div({
+                    bg: '#1a1a1a',
+                    color: '#e1e1e1',
+                    pad: 20,
+                    rounded: 8,
+                    fontFamily: 'monospace',
+                    margin: [20, 0]
+                },
+                    () => p('h1("Main Title")'),
+                    () => p('p("This is a paragraph")'),
+                    () => p('button("Click Me")')
+                )
+            ),
+            
+            () => div({ margin: [40, 0] },
+                () => h3('Step 3: Adding Styles'),
+                () => p('Style elements with intuitive properties:'),
+                () => div({
+                    bg: '#1a1a1a',
+                    color: '#e1e1e1',
+                    pad: 20,
+                    rounded: 8,
+                    fontFamily: 'monospace',
+                    margin: [20, 0]
+                },
+                    () => p('h1("Colored Title", {'),
+                    () => p('  color: "blue",'),
+                    () => p('  center: true'),
+                    () => p('})')
+                )
+            ),
+            
+            () => div({ margin: [40, 0] },
+                () => h3('Step 4: Layouts'),
+                () => p('Create layouts with flexbox:'),
+                () => div({
+                    bg: '#1a1a1a',
+                    color: '#e1e1e1',
+                    pad: 20,
+                    rounded: 8,
+                    fontFamily: 'monospace',
+                    margin: [20, 0]
+                },
+                    () => p('div({ row: true, gap: 20 },'),
+                    () => p('  () => button("Left"),'),
+                    () => p('  () => button("Right")'),
+                    () => p(')')
+                )
+            ),
+            
+            () => div({ margin: [40, 0] },
+                () => h3('Step 5: Interactivity'),
+                () => p('Add event handlers:'),
+                () => div({
+                    bg: '#1a1a1a',
+                    color: '#e1e1e1',
+                    pad: 20,
+                    rounded: 8,
+                    fontFamily: 'monospace',
+                    margin: [20, 0]
+                },
+                    () => p('button("Click Me", {'),
+                    () => p('  primary: true,'),
+                    () => p('  onClick: () => alert("Hello!")'),
+                    () => p('})')
+                )
+            ),
+            
+            () => div({ margin: [40, 0] },
+                () => h3('Step 6: State Management'),
+                () => p('Use reactive state:'),
+                () => div({
+                    bg: '#1a1a1a',
+                    color: '#e1e1e1',
+                    pad: 20,
+                    rounded: 8,
+                    fontFamily: 'monospace',
+                    margin: [20, 0]
+                },
+                    () => p('const counter = state(0)'),
+                    () => p(''),
+                    () => p('counter.subscribe(val => {'),
+                    () => p('  console.log("Count:", val)'),
+                    () => p('})'),
+                    () => p(''),
+                    () => p('button("+", {'),
+                    () => p('  onClick: () => counter.value++'),
+                    () => p('})')
+                )
+            ),
+            
+            () => div({ 
+                margin: [60, 0, 0, 0],
+                center: true,
+                col: true,
+                gap: 20
+            },
+                () => h2('🎉 Congratulations!'),
+                () => p('You have learned the fundamentals of Simplest.js!'),
+                () => div({ row: true, gap: 20, center: true },
+                    () => button('Try the Sandbox', {
+                        primary: true,
+                        pad: [14, 32],
+                        onClick: () => window.location.href = '/site/sandbox.html'
+                    }),
+                    () => button('Browse Examples', {
+                        ghost: true,
+                        pad: [12, 30],
+                        onClick: () => window.location.href = '/site/examples.html'
+                    })
+                )
+            )
+        );
+        
+        footer();
+        
+        console.log('Tutorial loaded successfully!');
+    </script>
+</body>
+</html>

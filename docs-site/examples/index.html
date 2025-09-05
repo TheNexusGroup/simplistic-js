@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examples - Simplest.js</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💡</text></svg>">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .example-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .example-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .example-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+        }
+        
+        .example-demo {
+            padding: 30px;
+            border-bottom: 1px solid #e2e8f0;
+            min-height: 200px;
+        }
+        
+        .example-code {
+            background: #1a1a1a;
+            color: #e1e1e1;
+            padding: 20px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin: 4px 4px 0 0;
+        }
+        
+        nav {
+            background: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .breadcrumb {
+            color: #64748b;
+        }
+        
+        .breadcrumb a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="breadcrumb">
+                <a href="../index.html">← Home</a> / Examples
+            </div>
+            <div>
+                <a href="../docs/index.html" style="color: #64748b; text-decoration: none; margin-right: 20px;">Docs</a>
+                <a href="../tutorials/index.html" style="color: #64748b; text-decoration: none;">Tutorial</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <script type="module">
+            import { app, h1, h2, h3, p, div, button, input, img } from '../../lib/src/simplest.js'
+            import { state } from '../../lib/src/state.js'
+
+            app(() => {
+                h1('💡 Examples Gallery', {
+                    size: 42,
+                    center: true,
+                    margin: [0, 0, 20, 0],
+                    color: '#1f2937'
+                })
+                
+                p('Real-world examples showing the power and simplicity of Simplest.js', {
+                    center: true,
+                    color: '#64748b',
+                    size: 18,
+                    margin: [0, 0, 50, 0]
+                })
+
+                // Examples grid
+                div({
+                    className: 'examples-grid'
+                },
+                    // Modern Landing Page
+                    createExternalExample({
+                        title: 'Modern Landing Page',
+                        description: 'Complete landing page with glassmorphism, hero sections, and modern pricing cards',
+                        tags: ['Landing', 'Glassmorphism', 'Hero', 'Pricing'],
+                        link: '../../examples/modern-landing.html',
+                        preview: '🌟 Modern design with glassmorphism effects, large typography, and interactive elements'
+                    }),
+
+                    // Stripe Dashboard
+                    createExternalExample({
+                        title: 'Stripe-style Dashboard',
+                        description: 'Professional dashboard with sidebar navigation, data tables, and statistics cards',
+                        tags: ['Dashboard', 'Tables', 'Navigation', 'Charts'],
+                        link: '../../examples/stripe-dashboard.html',
+                        preview: '📊 Complete dashboard with real-time stats, transaction tables, and interactive charts'
+                    }),
+
+                    // E-commerce Product Page
+                    createExternalExample({
+                        title: 'E-commerce Store',
+                        description: 'Modern product catalog with shopping cart, filters, and checkout flow',
+                        tags: ['E-commerce', 'Cart', 'Filters', 'Checkout'],
+                        link: '../../examples/ecommerce-store.html',
+                        preview: '🛒 Complete shopping experience with product grids, cart management, and payment flow'
+                    }),
+                    // Counter Example
+                    createExample({
+                        title: 'Interactive Counter',
+                        description: 'Basic reactive state management with increment/decrement buttons',
+                        tags: ['State', 'Events', 'Reactive'],
+                        code: `import { state } from 'simplest-js/state'
+
+const count = state(0)
+
+div({ center: true, col: true, gap: 20 },
+    p(\`Count: \${count.value}\`, { 
+        size: 24, 
+        bold: true 
+    }),
+    
+    div({ row: true, gap: 10 },
+        button('-', { 
+            onClick: () => count.value--,
+            bg: '#ef4444',
+            color: 'white'
+        }),
+        button('Reset', { 
+            onClick: () => count.value = 0 
+        }),
+        button('+', { 
+            onClick: () => count.value++,
+            bg: '#22c55e',
+            color: 'white'
+        })
+    )
+)`,
+                        demo: () => {
+                            const count = state(0)
+                            
+                            return div({ center: true, col: true, gap: 20 },
+                                (() => {
+                                    const display = p('', { size: 24, bold: true, color: '#1f2937' })
+                                    count.subscribe(val => display.textContent = `Count: ${val}`)
+                                    display.textContent = `Count: ${count.value}`
+                                    return display
+                                })(),
+                                
+                                div({ row: true, gap: 10 },
+                                    button('-', { 
+                                        onClick: () => count.value--,
+                                        bg: '#ef4444',
+                                        color: 'white',
+                                        pad: [8, 16],
+                                        rounded: 6
+                                    }),
+                                    button('Reset', { 
+                                        onClick: () => count.value = 0,
+                                        bg: '#64748b',
+                                        color: 'white',
+                                        pad: [8, 16],
+                                        rounded: 6
+                                    }),
+                                    button('+', { 
+                                        onClick: () => count.value++,
+                                        bg: '#22c55e',
+                                        color: 'white',
+                                        pad: [8, 16],
+                                        rounded: 6
+                                    })
+                                )
+                            )
+                        }
+                    }),
+
+                    // Todo List Example
+                    createExample({
+                        title: 'Todo List',
+                        description: 'Complete todo app with add, remove, and filter functionality',
+                        tags: ['Lists', 'Forms', 'State'],
+                        code: `const todos = state([
+    { id: 1, text: 'Learn Simplest.js', done: false },
+    { id: 2, text: 'Build something cool', done: true }
+])
+
+input({
+    placeholder: 'Add a todo...',
+    onEnter: (text) => {
+        todos.push({
+            id: Date.now(),
+            text,
+            done: false
+        })
+    }
+})
+
+todos.map(todo => 
+    div({ row: true, between: true, pad: 10, bg: '#f8fafc', rounded: 8 },
+        p(todo.text, { strike: todo.done }),
+        button(todo.done ? 'Undo' : 'Done', {
+            small: true,
+            onClick: () => todo.done = !todo.done
+        })
+    )
+)`,
+                        demo: () => {
+                            const todos = state([
+                                { id: 1, text: 'Learn Simplest.js', done: false },
+                                { id: 2, text: 'Build something cool', done: true }
+                            ])
+                            
+                            const container = div({ col: true, gap: 15 })
+                            
+                            const todoInput = input({
+                                placeholder: 'Add a todo...',
+                                width: '100%',
+                                pad: [10, 12],
+                                border: '1px solid #d1d5db',
+                                rounded: 6,
+                                onEnter: (text) => {
+                                    if (text.trim()) {
+                                        todos.push({
+                                            id: Date.now(),
+                                            text: text.trim(),
+                                            done: false
+                                        })
+                                        todoInput.value = ''
+                                    }
+                                }
+                            })
+                            container.appendChild(todoInput)
+                            
+                            const todoList = div({ col: true, gap: 8 })
+                            container.appendChild(todoList)
+                            
+                            const renderTodos = () => {
+                                todoList.innerHTML = ''
+                                todos.value.forEach((todo, index) => {
+                                    const todoItem = div({
+                                        row: true,
+                                        between: true,
+                                        pad: 12,
+                                        bg: todo.done ? '#f0fdf4' : '#f8fafc',
+                                        rounded: 8,
+                                        border: todo.done ? '1px solid #bbf7d0' : '1px solid #e2e8f0'
+                                    })
+                                    
+                                    const text = p(todo.text, { 
+                                        strike: todo.done,
+                                        color: todo.done ? '#16a34a' : '#374151',
+                                        margin: 0
+                                    })
+                                    
+                                    const btn = button(todo.done ? 'Undo' : 'Done', {
+                                        small: true,
+                                        bg: todo.done ? '#f59e0b' : '#22c55e',
+                                        color: 'white',
+                                        pad: [6, 12],
+                                        rounded: 4,
+                                        onClick: () => {
+                                            const newTodos = [...todos.value]
+                                            newTodos[index].done = !newTodos[index].done
+                                            todos.value = newTodos
+                                        }
+                                    })
+                                    
+                                    todoItem.appendChild(text)
+                                    todoItem.appendChild(btn)
+                                    todoList.appendChild(todoItem)
+                                })
+                            }
+                            
+                            todos.subscribe(renderTodos)
+                            renderTodos()
+                            
+                            return container
+                        }
+                    }),
+
+                    // Form Example
+                    createExample({
+                        title: 'Contact Form',
+                        description: 'Form with validation, styling, and submission handling',
+                        tags: ['Forms', 'Validation', 'Events'],
+                        code: `const formData = state({ name: '', email: '', message: '' })
+
+div({ col: true, gap: 20, pad: 30, bg: 'white', rounded: 12 },
+    h2('Contact Us'),
+    
+    input({
+        placeholder: 'Your Name',
+        value: formData.name,
+        onInput: (value) => formData.name = value
+    }),
+    
+    input({
+        type: 'email',
+        placeholder: 'Your Email',
+        value: formData.email,
+        onInput: (value) => formData.email = value
+    }),
+    
+    textarea({
+        placeholder: 'Your Message',
+        rows: 4,
+        value: formData.message,
+        onInput: (value) => formData.message = value
+    }),
+    
+    button('Send Message', {
+        primary: true,
+        onClick: () => {
+            alert(\`Thanks \${formData.name}! Message sent.\`)
+            formData.value = { name: '', email: '', message: '' }
+        }
+    })
+)`,
+                        demo: () => {
+                            const formData = state({ name: '', email: '', message: '' })
+                            
+                            return div({ col: true, gap: 15, pad: 25, bg: '#f8fafc', rounded: 12 },
+                                h3('Contact Us', { margin: [0, 0, 15, 0], color: '#1f2937' }),
+                                
+                                input({
+                                    placeholder: 'Your Name',
+                                    width: '100%',
+                                    pad: [10, 12],
+                                    border: '1px solid #d1d5db',
+                                    rounded: 6
+                                }),
+                                
+                                input({
+                                    type: 'email',
+                                    placeholder: 'Your Email', 
+                                    width: '100%',
+                                    pad: [10, 12],
+                                    border: '1px solid #d1d5db',
+                                    rounded: 6
+                                }),
+                                
+                                (() => {
+                                    const textarea = document.createElement('textarea')
+                                    textarea.placeholder = 'Your Message'
+                                    textarea.rows = 3
+                                    textarea.style.width = '100%'
+                                    textarea.style.padding = '10px 12px'
+                                    textarea.style.border = '1px solid #d1d5db'
+                                    textarea.style.borderRadius = '6px'
+                                    textarea.style.fontFamily = 'inherit'
+                                    textarea.style.resize = 'vertical'
+                                    return textarea
+                                })(),
+                                
+                                button('Send Message', {
+                                    primary: true,
+                                    bg: '#2563eb',
+                                    color: 'white',
+                                    pad: [12, 24],
+                                    rounded: 6,
+                                    width: '100%',
+                                    onClick: () => alert('Thanks! Message sent (demo)')
+                                })
+                            )
+                        }
+                    }),
+
+                    // Dashboard Cards
+                    createExample({
+                        title: 'Dashboard Cards',
+                        description: 'Responsive card layout with icons, stats, and hover effects',
+                        tags: ['Layout', 'Cards', 'Responsive'],
+                        code: `const stats = [
+    { label: 'Users', value: '12,345', icon: '👥', color: '#3b82f6' },
+    { label: 'Revenue', value: '$45,678', icon: '💰', color: '#10b981' },
+    { label: 'Orders', value: '1,234', icon: '📦', color: '#f59e0b' }
+]
+
+div({ row: true, gap: 20 },
+    ...stats.map(stat => 
+        div({
+            bg: 'white',
+            pad: 30,
+            rounded: 16,
+            shadow: true,
+            col: true,
+            gap: 15,
+            hover: { scale: 1.02 }
+        },
+            div({ row: true, between: true },
+                div({ size: 40 }, stat.icon),
+                p(stat.value, { 
+                    size: 24, 
+                    bold: true,
+                    color: stat.color 
+                })
+            ),
+            p(stat.label, { 
+                color: '#64748b',
+                size: 14 
+            })
+        )
+    )
+)`,
+                        demo: () => {
+                            const stats = [
+                                { label: 'Users', value: '12,345', icon: '👥', color: '#3b82f6' },
+                                { label: 'Revenue', value: '$45,678', icon: '💰', color: '#10b981' },
+                                { label: 'Orders', value: '1,234', icon: '📦', color: '#f59e0b' }
+                            ]
+                            
+                            return div({ 
+                                row: true, 
+                                gap: 15,
+                                style: {
+                                    overflowX: 'auto',
+                                    paddingBottom: '10px'
+                                }
+                            },
+                                ...stats.map(stat => 
+                                    div({
+                                        bg: 'white',
+                                        pad: 20,
+                                        rounded: 12,
+                                        shadow: true,
+                                        col: true,
+                                        gap: 12,
+                                        minWidth: 140,
+                                        hover: {
+                                            scale: 1.02
+                                        }
+                                    },
+                                        div({ row: true, between: true, center: true },
+                                            div({ size: 32 }, stat.icon),
+                                            p(stat.value, { 
+                                                size: 20, 
+                                                bold: true,
+                                                color: stat.color,
+                                                margin: 0
+                                            })
+                                        ),
+                                        p(stat.label, { 
+                                            color: '#64748b',
+                                            size: 13,
+                                            margin: 0
+                                        })
+                                    )
+                                )
+                            )
+                        }
+                    }),
+
+                    // Image Gallery
+                    createExample({
+                        title: 'Image Gallery',
+                        description: 'Responsive image grid with hover effects and modal preview',
+                        tags: ['Images', 'Grid', 'Modal'],
+                        code: `const images = [
+    'https://picsum.photos/300/300?random=1',
+    'https://picsum.photos/300/300?random=2',
+    'https://picsum.photos/300/300?random=3'
+]
+
+div({ 
+    row: true, 
+    gap: 15,
+    wrap: true 
+},
+    ...images.map(src =>
+        img(src, {
+            size: 150,
+            cover: true,
+            rounded: 12,
+            clickable: true,
+            hover: { scale: 1.05 },
+            onClick: () => {
+                // Modal preview
+                div({
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    full: true,
+                    bg: 'rgba(0,0,0,0.8)',
+                    center: true,
+                    onClick: (e) => e.target.remove()
+                },
+                    img(src, { 
+                        width: '80%', 
+                        maxHeight: '80%',
+                        rounded: 12 
+                    })
+                )
+            }
+        })
+    )
+)`,
+                        demo: () => {
+                            // Using placeholder colors instead of external images
+                            const colors = ['#ef4444', '#22c55e', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899']
+                            
+                            return div({ 
+                                row: true, 
+                                gap: 10,
+                                wrap: true 
+                            },
+                                ...colors.map((color, i) => {
+                                    const placeholder = div({
+                                        width: 100,
+                                        height: 100,
+                                        bg: color,
+                                        rounded: 8,
+                                        center: true,
+                                        color: 'white',
+                                        bold: true,
+                                        clickable: true,
+                                        hover: { scale: 1.05 },
+                                        onClick: () => alert(`Image ${i + 1} clicked! (Would open modal in real app)`)
+                                    })
+                                    placeholder.textContent = `IMG ${i + 1}`
+                                    return placeholder
+                                })
+                            )
+                        }
+                    }),
+
+                    // Theme Switcher
+                    createExample({
+                        title: 'Theme Switcher',
+                        description: 'Dark/light mode toggle with smooth transitions',
+                        tags: ['Theme', 'State', 'Animation'],
+                        code: `const theme = state('light')
+
+div({
+    bg: theme.value === 'dark' ? '#1f2937' : 'white',
+    color: theme.value === 'dark' ? 'white' : '#1f2937',
+    pad: 30,
+    rounded: 16,
+    transition: 'all 0.3s ease'
+},
+    div({ row: true, between: true },
+        h3(\`\${theme.value} Mode\`),
+        button(theme.value === 'dark' ? '☀️' : '🌙', {
+            bg: 'transparent',
+            size: 24,
+            onClick: () => {
+                theme.value = theme.value === 'dark' ? 'light' : 'dark'
+            }
+        })
+    ),
+    p(\`Current theme: \${theme.value}\`)
+)
+
+// Auto-update colors when theme changes
+theme.subscribe(newTheme => {
+    document.body.style.background = 
+        newTheme === 'dark' ? '#111827' : '#f8fafc'
+})`,
+                        demo: () => {
+                            const isDark = state(false)
+                            
+                            const container = div({
+                                bg: '#f8fafc',
+                                color: '#1f2937',
+                                pad: 25,
+                                rounded: 12,
+                                border: '1px solid #e2e8f0'
+                            })
+                            
+                            const header = div({ row: true, between: true, margin: [0, 0, 15, 0] },
+                                (() => {
+                                    const title = h3('', { margin: 0 })
+                                    isDark.subscribe(dark => {
+                                        title.textContent = `${dark ? 'Dark' : 'Light'} Mode`
+                                    })
+                                    title.textContent = 'Light Mode'
+                                    return title
+                                })(),
+                                
+                                button('🌙', {
+                                    bg: 'transparent',
+                                    size: 24,
+                                    border: 'none',
+                                    clickable: true,
+                                    rounded: 6,
+                                    pad: 8,
+                                    onClick: () => isDark.value = !isDark.value
+                                })
+                            )
+                            
+                            const content = p('Click the moon/sun icon to toggle themes!')
+                            content.style.margin = '0'
+                            
+                            isDark.subscribe(dark => {
+                                container.style.background = dark ? '#374151' : '#f8fafc'
+                                container.style.color = dark ? 'white' : '#1f2937'
+                                container.style.borderColor = dark ? '#4b5563' : '#e2e8f0'
+                                
+                                const btn = header.children[1]
+                                btn.textContent = dark ? '☀️' : '🌙'
+                                btn.style.background = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                            })
+                            
+                            container.appendChild(header)
+                            container.appendChild(content)
+                            
+                            return container
+                        }
+                    })
+                )
+                
+                // Footer
+                div({
+                    center: true,
+                    margin: [60, 0, 20, 0],
+                    col: true,
+                    gap: 20
+                },
+                    h2('Ready to Build?', { color: '#1f2937' }),
+                    p('These examples are just the beginning. With Simplest.js, the only limit is your imagination.', {
+                        center: true,
+                        color: '#64748b',
+                        width: 600
+                    }),
+                    
+                    div({ row: true, gap: 20, center: true },
+                        button('Start Tutorial →', {
+                            primary: true,
+                            bg: '#2563eb',
+                            color: 'white',
+                            pad: [16, 32],
+                            size: 16,
+                            rounded: 8,
+                            onClick: () => window.open('../tutorials/index.html')
+                        }),
+                        button('Read Docs', {
+                            ghost: true,
+                            border: '2px solid #2563eb',
+                            color: '#2563eb',
+                            pad: [14, 30],
+                            size: 16,
+                            rounded: 8,
+                            onClick: () => window.open('../docs/index.html')
+                        })
+                    )
+                )
+            })
+
+            // Helper function for external examples
+            function createExternalExample({ title, description, tags, link, preview }) {
+                const card = document.createElement('div')
+                card.className = 'example-card'
+                
+                // Header
+                const header = document.createElement('div')
+                header.className = 'example-header'
+                header.innerHTML = `
+                    <h3 style="margin: 0 0 10px 0; font-size: 20px;">${title}</h3>
+                    <p style="margin: 0 0 15px 0; opacity: 0.9; font-size: 14px;">${description}</p>
+                    <div>${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+                `
+                
+                // Preview area
+                const previewArea = document.createElement('div')
+                previewArea.className = 'example-demo'
+                previewArea.style.display = 'flex'
+                previewArea.style.flexDirection = 'column'
+                previewArea.style.alignItems = 'center'
+                previewArea.style.justifyContent = 'center'
+                previewArea.style.textAlign = 'center'
+                previewArea.style.gap = '20px'
+                
+                const previewText = document.createElement('p')
+                previewText.textContent = preview
+                previewText.style.color = '#64748b'
+                previewText.style.margin = '0'
+                previewText.style.lineHeight = '1.6'
+                
+                const openButton = document.createElement('button')
+                openButton.textContent = 'View Full Example →'
+                openButton.style.cssText = `
+                    background: #2563eb;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                `
+                openButton.addEventListener('click', () => window.open(link, '_blank'))
+                openButton.addEventListener('mouseenter', () => {
+                    openButton.style.background = '#1d4ed8'
+                    openButton.style.transform = 'translateY(-2px)'
+                })
+                openButton.addEventListener('mouseleave', () => {
+                    openButton.style.background = '#2563eb'
+                    openButton.style.transform = 'translateY(0)'
+                })
+                
+                previewArea.appendChild(previewText)
+                previewArea.appendChild(openButton)
+                
+                // Code snippet (simplified)
+                const codeArea = document.createElement('div')
+                codeArea.className = 'example-code'
+                codeArea.textContent = `// Click "View Full Example" to see the complete implementation
+// This example demonstrates:
+${tags.map(tag => `// • ${tag} patterns and components`).join('\n')}
+
+// Built with Simplistic.js natural syntax
+import { div, h1, button, nav } from 'simplistic-js'
+
+// Simple, readable code that creates beautiful UIs`
+                
+                card.appendChild(header)
+                card.appendChild(previewArea)
+                card.appendChild(codeArea)
+                
+                return card
+            }
+
+            // Helper function to create example cards
+            function createExample({ title, description, tags, code, demo }) {
+                const card = document.createElement('div')
+                card.className = 'example-card'
+                
+                // Header
+                const header = document.createElement('div')
+                header.className = 'example-header'
+                header.innerHTML = `
+                    <h3 style="margin: 0 0 10px 0; font-size: 20px;">${title}</h3>
+                    <p style="margin: 0 0 15px 0; opacity: 0.9; font-size: 14px;">${description}</p>
+                    <div>${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+                `
+                
+                // Demo area
+                const demoArea = document.createElement('div')
+                demoArea.className = 'example-demo'
+                
+                if (demo) {
+                    const demoResult = demo()
+                    if (demoResult) {
+                        demoArea.appendChild(demoResult)
+                    }
+                }
+                
+                // Code area
+                const codeArea = document.createElement('div')
+                codeArea.className = 'example-code'
+                codeArea.textContent = code
+                
+                card.appendChild(header)
+                card.appendChild(demoArea)
+                card.appendChild(codeArea)
+                
+                return card
+            }
+        </script>
+    </div>
+</body>
+</html>

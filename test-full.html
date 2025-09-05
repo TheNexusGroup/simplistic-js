@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Natural Syntax Test</title>
+</head>
+<body>
+    <h2>Testing TRUE Natural Simplest.js Syntax</h2>
+    <p>If the natural syntax works, you should see elements appear below:</p>
+    <hr>
+    
+    <script type="module">
+        // This should work with NO app() wrapper!
+        import { h1, h2, p, div, button, input } from './lib/src/simplest.js'
+        import { state } from './lib/src/state.js'
+
+        console.log('Starting natural syntax test...')
+        
+        // Test 1: Basic element creation (should just appear)
+        h1('✅ Test 1: Basic Elements', { 
+            color: 'green',
+            fadeIn: true
+        })
+        
+        p('If you see this heading and paragraph, basic element creation works!')
+        
+        // Test 2: Layout with styling
+        h2('✅ Test 2: Layout & Styling')
+        
+        div({ 
+            row: true, 
+            gap: 20,
+            pad: 20,
+            bg: '#f0f0f0',
+            rounded: 8,
+            margin: [20, 0]
+        },
+            div({
+                bg: '#e3f2fd',
+                pad: 15,
+                rounded: 6,
+                center: true
+            }, 'Box 1'),
+            
+            div({
+                bg: '#f3e5f5',
+                pad: 15,
+                rounded: 6,
+                center: true
+            }, 'Box 2'),
+            
+            div({
+                bg: '#e8f5e8',
+                pad: 15,
+                rounded: 6,
+                center: true
+            }, 'Box 3')
+        )
+        
+        // Test 3: Interactive elements
+        h2('✅ Test 3: Interactive Elements')
+        
+        button('Click me!', {
+            primary: true,
+            onClick: () => {
+                p('Button clicked! ✅', { color: 'green', bold: true })
+            }
+        })
+        
+        // Test 4: Input with onEnter
+        h2('✅ Test 4: Input Handling')
+        
+        p('Type something and press Enter:')
+        
+        input({
+            placeholder: 'Type here...',
+            size: 'large',
+            onEnter: (value) => {
+                p(`You typed: "${value}" ✅`, { 
+                    color: 'blue',
+                    italic: true,
+                    margin: [10, 0, 0, 0]
+                })
+            }
+        })
+        
+        // Test 5: Reactive state
+        h2('✅ Test 5: Reactive State')
+        
+        const count = state(0)
+        
+        // This should update automatically
+        const display = p(`Count: ${count.value}`, {
+            size: 20,
+            bold: true,
+            color: 'purple'
+        })
+        
+        count.subscribe(newValue => {
+            display.textContent = `Count: ${newValue}`
+        })
+        
+        div({ row: true, gap: 10, margin: [10, 0] },
+            button('-', {
+                onClick: () => count.value--,
+                bg: '#f44336',
+                color: 'white'
+            }),
+            button('Reset', {
+                onClick: () => count.value = 0,
+                bg: '#666',
+                color: 'white'
+            }),
+            button('+', {
+                onClick: () => count.value++,
+                bg: '#4caf50',
+                color: 'white'
+            })
+        )
+        
+        // Final result
+        p('🎉 If all tests above work, the TRUE natural syntax is working perfectly!', {
+            color: 'green',
+            bold: true,
+            size: 18,
+            center: true,
+            margin: [40, 0, 20, 0],
+            bg: '#f0fff0',
+            pad: 20,
+            rounded: 8
+        })
+        
+        console.log('Natural syntax test completed!')
+    </script>
+</body>
+</html>

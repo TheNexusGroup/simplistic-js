@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simplest v2 - Singleton Test</title>
+</head>
+<body>
+    <h2 style="color: #666;">Testing Simplest.js v2 Singleton Implementation</h2>
+    <hr>
+    
+    <script type="module">
+        console.log('Starting Simplest v2 test...');
+        
+        // Import the new singleton-based version
+        import { h1, h2, h3, p, div, button, input } from './lib/src/simplest-v2.js';
+        
+        // This should just work - no wrappers, no setup!
+        h1('🎉 Simplest v2 Works!', { 
+            color: 'green',
+            center: true,
+            fadeIn: true
+        });
+        
+        p('The singleton pattern makes natural syntax actually work!');
+        
+        // Test nested div with children
+        div({ 
+            row: true, 
+            gap: 20,
+            pad: 20,
+            bg: '#f0f0f0',
+            rounded: 8,
+            margin: [20, 0]
+        },
+            () => p('Inside div - child 1'),
+            () => p('Inside div - child 2'),
+            () => button('Nested Button', {
+                primary: true,
+                onClick: () => {
+                    p('✅ Nested button clicked!', { 
+                        color: 'blue',
+                        bold: true 
+                    });
+                }
+            })
+        );
+        
+        // Test interactive elements
+        h2('Interactive Test');
+        
+        button('Click to Test', {
+            primary: true,
+            onClick: () => {
+                p(`Clicked at ${new Date().toLocaleTimeString()}`, { 
+                    color: 'purple',
+                    italic: true
+                });
+            }
+        });
+        
+        // Test input
+        h2('Input Test');
+        
+        input({
+            placeholder: 'Type and press Enter...',
+            size: 'large',
+            onEnter: (value) => {
+                p(`You entered: "${value}"`, {
+                    bg: '#e8f5e9',
+                    pad: 10,
+                    rounded: 4,
+                    color: '#2e7d32'
+                });
+            }
+        });
+        
+        // Test multiple elements in sequence
+        h2('Sequential Elements');
+        
+        p('Element 1');
+        p('Element 2');
+        p('Element 3');
+        
+        // Complex nested structure
+        div({
+            bg: 'white',
+            border: '#ddd',
+            rounded: 12,
+            pad: 30,
+            margin: [30, 0],
+            shadow: true
+        },
+            () => h3('Card Title'),
+            () => p('This is a card with nested content'),
+            () => div({ row: true, gap: 10, margin: [20, 0, 0, 0] },
+                () => button('Accept', { primary: true }),
+                () => button('Cancel', { ghost: true })
+            )
+        );
+        
+        console.log('Simplest v2 test completed!');
+    </script>
+</body>
+</html>

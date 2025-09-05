@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Module Import Test</title>
+</head>
+<body>
+    <h1>Testing Module Imports</h1>
+    <div id="output"></div>
+    
+    <script type="module">
+        const output = document.getElementById('output');
+        
+        try {
+            console.log('Starting import test...');
+            output.innerHTML += '<p>Starting import test...</p>';
+            
+            // Test importing simplest-v2.js
+            const { h1, p, div, button } = await import('../lib/src/simplest-v2.js');
+            console.log('Import successful!', { h1, p, div, button });
+            output.innerHTML += '<p style="color: green;">✅ Import successful!</p>';
+            
+            // Test importing state.js
+            const { state } = await import('../lib/src/state.js');
+            console.log('State import successful!', { state });
+            output.innerHTML += '<p style="color: green;">✅ State import successful!</p>';
+            
+            // Test importing components.js
+            const { navigation } = await import('./components.js');
+            console.log('Components import successful!', { navigation });
+            output.innerHTML += '<p style="color: green;">✅ Components import successful!</p>';
+            
+            // Test creating elements
+            console.log('Testing element creation...');
+            h1('Test Header', { color: 'blue' });
+            p('Test paragraph', { margin: '10px 0' });
+            
+            output.innerHTML += '<p style="color: green;">✅ Element creation successful!</p>';
+            
+        } catch (error) {
+            console.error('Import or execution error:', error);
+            output.innerHTML += `<p style="color: red;">❌ Error: ${error.message}</p>`;
+            output.innerHTML += `<p style="color: red;">Stack: ${error.stack}</p>`;
+        }
+    </script>
+</body>
+</html>

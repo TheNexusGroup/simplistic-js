@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Syntax Test</title>
+</head>
+<body>
+    <script type="module">
+        // Import Simplest.js
+        import { h1, p, button, div, input } from './lib/src/simplest.js'
+        import { state } from './lib/src/state.js'
+
+        // This should just work - NO app() wrapper needed!
+        h1('Welcome to TRUE Simplest.js!', { 
+            center: true, 
+            color: 'blue',
+            fadeIn: true
+        })
+
+        p('This is natural syntax - elements appear as you write them!')
+
+        div({ 
+            row: true, 
+            gap: 20, 
+            center: true,
+            margin: [30, 0]
+        },
+            button('Primary', { 
+                primary: true,
+                onClick: () => alert('Natural syntax works!')
+            }),
+            button('Ghost', { 
+                ghost: true,
+                onClick: () => alert('No wrappers needed!')
+            })
+        )
+
+        // Test reactive state
+        const count = state(0)
+
+        p('Counter example with reactive state:')
+
+        div({ center: true, col: true, gap: 15 },
+            // This should auto-update when count changes
+            (() => {
+                const display = p(`Count: ${count.value}`, { 
+                    size: 24, 
+                    bold: true,
+                    color: 'green'
+                })
+                
+                count.subscribe(newValue => {
+                    display.textContent = `Count: ${newValue}`
+                })
+                
+                return display
+            })(),
+
+            div({ row: true, gap: 10 },
+                button('-', { 
+                    onClick: () => count.value--,
+                    bg: 'red',
+                    color: 'white'
+                }),
+                button('+', { 
+                    onClick: () => count.value++,
+                    bg: 'green',
+                    color: 'white'
+                })
+            )
+        )
+
+        // Test input
+        p('Try typing and pressing Enter:')
+        
+        input({
+            placeholder: 'Type something...',
+            size: 'large',
+            onEnter: (text) => {
+                p(`You typed: "${text}"`, { 
+                    color: 'purple',
+                    italic: true,
+                    margin: [10, 0, 0, 0]
+                })
+            }
+        })
+
+        p('🎉 If you see this working, the natural syntax is REAL!', {
+            center: true,
+            color: 'green',
+            bold: true,
+            margin: [40, 0, 0, 0]
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examples - Simplest.js</title>
+</head>
+<body>
+    <script type="module">
+        import { h1, h2, h3, p, div, button, input } from '../lib/src/simplest-v2.js';
+        import { state } from '../lib/src/state.js';
+        import { navigation, hero, footer } from './components.js';
+        
+        console.log('Starting examples...');
+        
+        navigation('examples');
+        hero('Live Examples', 'Complete applications built with Simplest.js');
+        
+        div({ maxWidth: 1200, margin: '0 auto', pad: [40, 20] },
+            () => h2('Interactive Examples'),
+            () => p('Here are some working examples you can interact with:'),
+            
+            // Example 1: Counter
+            () => div({ 
+                bg: 'white',
+                border: '1px solid #e5e7eb',
+                rounded: 12,
+                pad: 30,
+                margin: [40, 0]
+            },
+                () => h3('1. Interactive Counter'),
+                () => p('A simple counter with reactive state:'),
+                () => {
+                    const count = state(0);
+                    
+                    div({ center: true, margin: [20, 0] },
+                        () => {
+                            const display = p('Count: ' + count.value, {
+                                size: 24,
+                                margin: [0, 0, 20, 0]
+                            });
+                            
+                            count.subscribe(val => {
+                                display.textContent = 'Count: ' + val;
+                            });
+                            
+                            return display;
+                        },
+                        () => div({ row: true, gap: 10, center: true },
+                            () => button('-', {
+                                bg: '#ef4444',
+                                color: 'white',
+                                pad: [10, 20],
+                                onClick: () => count.value--
+                            }),
+                            () => button('+', {
+                                bg: '#10b981',
+                                color: 'white',
+                                pad: [10, 20],
+                                onClick: () => count.value++
+                            })
+                        )
+                    );
+                }
+            ),
+            
+            // Example 2: Todo List
+            () => div({ 
+                bg: 'white',
+                border: '1px solid #e5e7eb',
+                rounded: 12,
+                pad: 30,
+                margin: [40, 0]
+            },
+                () => h3('2. Todo List'),
+                () => p('A dynamic todo list with add/remove functionality:'),
+                () => {
+                    const todos = state([]);
+                    
+                    const inputField = input({
+                        placeholder: 'Add a todo and press Enter...',
+                        width: '100%',
+                        pad: [12, 16],
+                        margin: [20, 0],
+                        onEnter: (text) => {
+                            if (text.trim()) {
+                                todos.push({ id: Date.now(), text, done: false });
+                                inputField.value = '';
+                            }
+                        }
+                    });
+                    
+                    const todoContainer = div({ col: true, gap: 10, margin: [20, 0] });
+                    
+                    function renderTodos() {
+                        todoContainer.innerHTML = '';
+                        
+                        todos.value.forEach(todo => {
+                            const todoDiv = document.createElement('div');
+                            todoDiv.style.cssText = `
+                                display: flex;
+                                justify-content: space-between;
+                                padding: 12px;
+                                background: ${todo.done ? '#f9fafb' : 'white'};
+                                border: 1px solid #e5e7eb;
+                                border-radius: 6px;
+                                align-items: center;
+                                margin: 5px 0;
+                            `;
+                            
+                            const text = document.createElement('p');
+                            text.textContent = todo.text;
+                            text.style.cssText = `
+                                margin: 0;
+                                flex: 1;
+                                ${todo.done ? 'text-decoration: line-through; color: #9ca3af;' : 'color: #1f2937;'}
+                            `;
+                            
+                            const btn = document.createElement('button');
+                            btn.textContent = todo.done ? '↺' : '✓';
+                            btn.style.cssText = `
+                                background: ${todo.done ? '#6b7280' : '#10b981'};
+                                color: white;
+                                padding: 4px 12px;
+                                border-radius: 4px;
+                                border: none;
+                                cursor: pointer;
+                            `;
+                            btn.onclick = () => {
+                                todo.done = !todo.done;
+                                renderTodos();
+                            };
+                            
+                            todoDiv.appendChild(text);
+                            todoDiv.appendChild(btn);
+                            todoContainer.appendChild(todoDiv);
+                        });
+                    }
+                    
+                    todos.subscribe(renderTodos);
+                    
+                    return [inputField, todoContainer];
+                }
+            ),
+            
+            // Example 3: Form
+            () => div({ 
+                bg: 'white',
+                border: '1px solid #e5e7eb',
+                rounded: 12,
+                pad: 30,
+                margin: [40, 0]
+            },
+                () => h3('3. Contact Form'),
+                () => p('A form with validation:'),
+                () => {
+                    const formData = state({ name: '', email: '', submitted: false });
+                    
+                    div({ col: true, gap: 15, maxWidth: 400 },
+                        () => input({
+                            placeholder: 'Your name',
+                            width: '100%',
+                            pad: [12, 16],
+                            onChange: (e) => {
+                                formData.value.name = e.target.value;
+                            }
+                        }),
+                        () => input({
+                            type: 'email',
+                            placeholder: 'your@email.com',
+                            width: '100%',
+                            pad: [12, 16],
+                            onChange: (e) => {
+                                formData.value.email = e.target.value;
+                            }
+                        }),
+                        () => button('Submit', {
+                            primary: true,
+                            onClick: () => {
+                                if (formData.value.name && formData.value.email) {
+                                    formData.value.submitted = true;
+                                    formData.notify();
+                                } else {
+                                    alert('Please fill in all fields');
+                                }
+                            }
+                        }),
+                        () => {
+                            const successMsg = p('✅ Form submitted successfully!', { 
+                                color: 'green',
+                                display: 'none',
+                                margin: [20, 0, 0, 0]
+                            });
+                            
+                            formData.subscribe(() => {
+                                successMsg.style.display = formData.value.submitted ? 'block' : 'none';
+                            });
+                            
+                            return successMsg;
+                        }
+                    );
+                }
+            ),
+            
+            // Code Examples Section
+            () => div({ margin: [60, 0] },
+                () => h2('Code Examples'),
+                () => p('Here are the code snippets for the examples above:'),
+                
+                () => div({
+                    bg: '#1a1a1a',
+                    color: '#e1e1e1',
+                    pad: 20,
+                    rounded: 8,
+                    fontFamily: 'monospace',
+                    margin: [20, 0]
+                },
+                    () => p('// Counter Example'),
+                    () => p('const count = state(0)'),
+                    () => p(''),
+                    () => p('button("+", {'),
+                    () => p('  onClick: () => count.value++'),
+                    () => p('})')
+                ),
+                
+                () => div({
+                    bg: '#1a1a1a',
+                    color: '#e1e1e1',
+                    pad: 20,
+                    rounded: 8,
+                    fontFamily: 'monospace',
+                    margin: [20, 0]
+                },
+                    () => p('// Todo List Example'),
+                    () => p('const todos = state([])'),
+                    () => p(''),
+                    () => p('input({'),
+                    () => p('  onEnter: (text) => {'),
+                    () => p('    todos.push({ text, done: false })'),
+                    () => p('  }'),
+                    () => p('})')
+                )
+            ),
+            
+            () => div({ 
+                center: true,
+                margin: [60, 0]
+            },
+                () => button('Try the Sandbox', {
+                    primary: true,
+                    pad: [14, 32],
+                    onClick: () => window.location.href = '/site/sandbox.html'
+                })
+            )
+        );
+        
+        footer();
+        
+        console.log('Examples loaded successfully!');
+    </script>
+</body>
+</html>

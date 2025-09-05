@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simplistic Demo - Basic Example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+        import { app, h1, h2, p, div, button, input, img } from '../src/simplistic.js'
+        import { state, each } from '../src/state.js'
+
+        app(() => {
+            // Basic elements
+            h1('Welcome to Simplistic!', { 
+                color: '#2563eb',
+                center: true,
+                fadeIn: true
+            })
+            
+            p('This is web development made simple. No frameworks, no complexity.', {
+                center: true,
+                gray: true,
+                margin: [0, 0, 40, 0]
+            })
+            
+            // Layout demo
+            div({ center: true, margin: [0, 0, 40, 0] },
+                div({
+                    row: true,
+                    gap: 20,
+                    pad: 30,
+                    bg: 'white',
+                    rounded: 12,
+                    shadow: true
+                },
+                    div({
+                        pad: 20,
+                        bg: '#dbeafe',
+                        rounded: 8,
+                        center: true
+                    },
+                        h2('Box 1', { color: '#1e40af', size: 18 })
+                    ),
+                    div({
+                        pad: 20,
+                        bg: '#dcfce7',
+                        rounded: 8,
+                        center: true
+                    },
+                        h2('Box 2', { color: '#166534', size: 18 })
+                    ),
+                    div({
+                        pad: 20,
+                        bg: '#fef3c7',
+                        rounded: 8,
+                        center: true
+                    },
+                        h2('Box 3', { color: '#92400e', size: 18 })
+                    )
+                )
+            )
+            
+            // Interactive demo
+            div({ center: true, margin: [0, 0, 40, 0] },
+                div({
+                    pad: 30,
+                    bg: 'white',
+                    rounded: 12,
+                    shadow: true,
+                    width: 400
+                },
+                    h2('Interactive Demo', { center: true, margin: [0, 0, 20, 0] }),
+                    
+                    div({ row: true, gap: 10, margin: [0, 0, 20, 0] },
+                        button('Primary', { 
+                            primary: true,
+                            onClick: () => alert('Primary clicked!')
+                        }),
+                        button('Secondary', {
+                            onClick: () => alert('Secondary clicked!')
+                        }),
+                        button('Ghost', { 
+                            ghost: true,
+                            onClick: () => alert('Ghost clicked!')
+                        })
+                    ),
+                    
+                    input({ 
+                        placeholder: 'Type something...',
+                        size: 'large',
+                        onEnter: (value) => {
+                            p(`You typed: "${value}"`, { 
+                                bg: '#f0f9ff',
+                                pad: 10,
+                                rounded: 6,
+                                margin: [10, 0, 0, 0]
+                            })
+                        }
+                    })
+                )
+            )
+            
+            // Footer
+            p('Built with Simplistic - Natural Web Development', {
+                center: true,
+                small: true,
+                gray: true,
+                margin: [40, 0, 0, 0]
+            })
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - Simplest.js</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fafafa;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .doc-grid { display: grid; grid-template-columns: 250px 1fr; gap: 40px; margin-top: 20px; }
+        
+        .sidebar {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .code-block {
+            background: #1a1a1a;
+            color: #e1e1e1;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 14px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+        
+        .nav-link {
+            display: block;
+            padding: 8px 16px;
+            color: #64748b;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 4px 0;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .section { margin: 40px 0; }
+        .section h2 { color: #1f2937; margin-bottom: 20px; }
+        .section h3 { color: #374151; margin: 24px 0 12px 0; }
+        
+        @media (max-width: 768px) {
+            .doc-grid { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <script type="module">
+            import { app, h1, h2, h3, p, div, button, a } from '../../lib/src/simplest.js'
+
+            app(() => {
+                // Header
+                div({ row: true, between: true, margin: [0, 0, 30, 0] },
+                    div({ row: true, gap: 15 },
+                        a('← Back to Home', {
+                            href: '../index.html',
+                            color: '#2563eb',
+                            textDecoration: 'none'
+                        }),
+                        h1('📚 Documentation', { color: '#1f2937' })
+                    ),
+                    
+                    button('GitHub', {
+                        bg: '#24292f',
+                        color: 'white',
+                        pad: [8, 16],
+                        rounded: 6,
+                        onClick: () => window.open('https://github.com/TheNexusGroup/simplest-js')
+                    })
+                )
+
+                // Main content grid
+                div({ 
+                    row: true, 
+                    gap: 40,
+                    className: 'doc-grid'
+                },
+                    // Sidebar
+                    div({
+                        bg: 'white',
+                        pad: 30,
+                        rounded: 12,
+                        shadow: true,
+                        width: 250,
+                        className: 'sidebar'
+                    },
+                        h3('Quick Start'),
+                        ...[
+                            'Installation',
+                            'Your First App',
+                            'Basic Elements'
+                        ].map(text => 
+                            a(text, { 
+                                className: 'nav-link',
+                                href: `#${text.toLowerCase().replace(/\s/g, '-')}`
+                            })
+                        ),
+                        
+                        h3('Core Concepts', { margin: [30, 0, 10, 0] }),
+                        ...[
+                            'Element Creation',
+                            'Styling System',
+                            'Event Handling',
+                            'State Management'
+                        ].map(text =>
+                            a(text, {
+                                className: 'nav-link',
+                                href: `#${text.toLowerCase().replace(/\s/g, '-')}`
+                            })
+                        ),
+                        
+                        h3('Advanced', { margin: [30, 0, 10, 0] }),
+                        ...[
+                            'Reactive State',
+                            'Component Patterns',
+                            'Performance Tips'
+                        ].map(text =>
+                            a(text, {
+                                className: 'nav-link',
+                                href: `#${text.toLowerCase().replace(/\s/g, '-')}`
+                            })
+                        )
+                    ),
+                    
+                    // Content
+                    div({
+                        bg: 'white',
+                        pad: 40,
+                        rounded: 12,
+                        shadow: true,
+                        className: 'content'
+                    },
+                        // Installation section
+                        div({ className: 'section', id: 'installation' },
+                            h2('Installation'),
+                            p('Get started with Simplest.js in seconds:'),
+                            
+                            (() => {
+                                const code = document.createElement('div')
+                                code.className = 'code-block'
+                                code.innerHTML = `# Via npm
+npm install simplest-js
+
+# Via yarn  
+yarn add simplest-js
+
+# Via CDN (no build step needed)
+import { h1, p } from 'https://unpkg.com/simplest-js'`
+                                document.body.appendChild(code)
+                                return null
+                            })()
+                        ),
+                        
+                        // Your first app
+                        div({ className: 'section', id: 'your-first-app' },
+                            h2('Your First App'),
+                            p('Create your first Simplest.js app:'),
+                            
+                            (() => {
+                                const code = document.createElement('div')
+                                code.className = 'code-block'
+                                code.innerHTML = `<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<body>
+    <script type="module">
+        import { app, h1, p, button } from 'simplest-js'
+        
+        app(() => {
+            h1('Hello World!')
+            p('Welcome to natural web development')
+            
+            button('Click me', {
+                primary: true,
+                onClick: () => alert('It works!')
+            })
+        })
+    </script>
+</body>
+</html>`
+                                document.body.appendChild(code)
+                                return null
+                            })(),
+                            
+                            p('That\'s it! No build tools, no configuration, just open the HTML file.')
+                        ),
+                        
+                        // Basic Elements
+                        div({ className: 'section', id: 'basic-elements' },
+                            h2('Basic Elements'),
+                            p('Every HTML element you need, with intuitive properties:'),
+                            
+                            (() => {
+                                const code = document.createElement('div')
+                                code.className = 'code-block'
+                                code.innerHTML = `// Text elements
+h1('Main Title', { color: 'blue', center: true })
+h2('Subtitle', { gray: true })
+p('Paragraph text', { size: 16 })
+
+// Layout containers
+div({ row: true, gap: 20 },
+    div({ col: true, pad: 20, bg: 'white', rounded: true },
+        h3('Card Title'),
+        p('Card content')
+    )
+)
+
+// Interactive elements
+button('Click me', { 
+    primary: true, 
+    onClick: () => console.log('Clicked!') 
+})
+
+input({
+    placeholder: 'Type something...',
+    onEnter: (value) => console.log('Entered:', value)
+})
+
+// Images
+img('/photo.jpg', { 
+    size: 200, 
+    round: true,
+    cover: true 
+})`
+                                document.body.appendChild(code)
+                                return null
+                            })()
+                        ),
+                        
+                        // Styling System
+                        div({ className: 'section', id: 'styling-system' },
+                            h2('Styling System'),
+                            p('No CSS needed. Style with intuitive properties:'),
+                            
+                            h3('Layout Properties'),
+                            (() => {
+                                const code = document.createElement('div')
+                                code.className = 'code-block'
+                                code.innerHTML = `div({
+    row: true,         // flex-direction: row
+    col: true,         // flex-direction: column
+    center: true,      // center everything
+    between: true,     // space-between
+    around: true,      // space-around
+    gap: 20,          // gap: 20px
+    full: true,       // width: 100%, height: 100%
+    width: 300,       // width: 300px
+    height: '50vh'    // height: 50vh
+})`
+                                document.body.appendChild(code)
+                                return null
+                            })(),
+                            
+                            h3('Spacing & Visual'),
+                            (() => {
+                                const code = document.createElement('div')
+                                code.className = 'code-block'
+                                code.innerHTML = `div({
+    pad: 20,           // padding: 20px
+    pad: [10, 20],     // padding: 10px 20px
+    margin: 15,        // margin: 15px
+    
+    bg: 'blue',        // background: blue
+    color: 'white',    // color: white
+    rounded: true,     // border-radius: 8px
+    rounded: 15,       // border-radius: 15px
+    shadow: true,      // nice default shadow
+    border: 'red',     // border: 1px solid red
+    
+    hover: {           // :hover state
+        bg: 'darkblue',
+        scale: 1.05
+    }
+})`
+                                document.body.appendChild(code)
+                                return null
+                            })()
+                        ),
+                        
+                        // State Management
+                        div({ className: 'section', id: 'state-management' },
+                            h2('State Management'),
+                            p('Built-in reactive state that just works:'),
+                            
+                            (() => {
+                                const code = document.createElement('div')
+                                code.className = 'code-block'
+                                code.innerHTML = `import { state } from 'simplest-js/state'
+
+// Create reactive state
+const count = state(0)
+const user = state({ name: 'John', email: 'john@example.com' })
+
+// Elements auto-update when state changes
+p(\`Count: \${count.value}\`)  // Updates automatically
+
+button('+', { onClick: () => count.value++ })
+
+// Computed values
+const doubled = count.map(c => c * 2)
+p(\`Doubled: \${doubled.value}\`)  // Also updates automatically
+
+// Conditional rendering
+count.when(c => c > 5, () =>
+    p('Count is greater than 5!', { color: 'green' })
+)
+
+// Arrays and lists
+const todos = state(['Learn Simplest.js', 'Build something cool'])
+
+todos.map(todo => 
+    div({ row: true, between: true },
+        p(todo),
+        button('Done', { onClick: () => todos.remove(todo) })
+    )
+)`
+                                document.body.appendChild(code)
+                                return null
+                            })()
+                        ),
+                        
+                        // Component Patterns
+                        div({ className: 'section', id: 'component-patterns' },
+                            h2('Component Patterns'),
+                            p('Reusable components are just functions:'),
+                            
+                            (() => {
+                                const code = document.createElement('div')
+                                code.className = 'code-block'
+                                code.innerHTML = `// Simple component
+function Card({ title, content, image }) {
+    return div({
+        bg: 'white',
+        pad: 20,
+        rounded: 12,
+        shadow: true
+    },
+        img(image, { width: '100%', rounded: 8 }),
+        h3(title, { margin: [15, 0, 10, 0] }),
+        p(content, { color: '#64748b' })
+    )
+}
+
+// Use it anywhere
+Card({
+    title: 'My Card',
+    content: 'This is card content',
+    image: '/card-image.jpg'
+})
+
+// With state
+function Counter({ initialValue = 0 }) {
+    const count = state(initialValue)
+    
+    return div({ center: true, col: true, gap: 20 },
+        p(\`Count: \${count.value}\`, { size: 24 }),
+        
+        div({ row: true, gap: 10 },
+            button('-', { onClick: () => count.value-- }),
+            button('Reset', { onClick: () => count.value = 0 }),
+            button('+', { onClick: () => count.value++ })
+        )
+    )
+}
+
+// Reusable everywhere
+Counter({ initialValue: 10 })`
+                                document.body.appendChild(code)
+                                return null
+                            })()
+                        ),
+                        
+                        // Performance Tips
+                        div({ className: 'section', id: 'performance-tips' },
+                            h2('Performance Tips'),
+                            
+                            h3('✅ Do This'),
+                            (() => {
+                                const code = document.createElement('div')
+                                code.className = 'code-block'
+                                code.innerHTML = `// Use state for dynamic data
+const items = state([])
+
+// Batch state updates
+function addMultiple(newItems) {
+    items.value = [...items.value, ...newItems]  // Single update
+}
+
+// Use computed values for derived data
+const filteredItems = items.map(list => 
+    list.filter(item => item.active)
+)`
+                                document.body.appendChild(code)
+                                return null
+                            })(),
+                            
+                            h3('❌ Avoid This'),
+                            (() => {
+                                const code = document.createElement('div')
+                                code.className = 'code-block'
+                                code.innerHTML = `// Don't mutate state directly (unless it's an array method)
+items.value.push(item)  // ❌ Won't trigger updates
+items.push(item)        // ✅ Will trigger updates
+
+// Don't create multiple updates in a loop
+items.forEach(item => {
+    someState.value = item  // ❌ Multiple updates
+})
+
+// Instead, batch them
+someState.value = items[items.length - 1]  // ✅ Single update`
+                                document.body.appendChild(code)
+                                return null
+                            })()
+                        ),
+                        
+                        // Next Steps
+                        div({ className: 'section' },
+                            h2('Next Steps'),
+                            p('Ready to build something amazing?'),
+                            
+                            div({ row: true, gap: 20, margin: [20, 0, 0, 0] },
+                                button('Interactive Tutorial →', {
+                                    primary: true,
+                                    onClick: () => window.open('../tutorials/index.html')
+                                }),
+                                button('View Examples →', {
+                                    ghost: true,
+                                    onClick: () => window.open('../examples/index.html')
+                                })
+                            )
+                        )
+                    )
+                )
+            })
+        </script>
+    </div>
+</body>
+</html>

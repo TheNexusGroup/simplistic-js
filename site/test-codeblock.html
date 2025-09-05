@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test CodeBlock</title>
+</head>
+<body>
+    <script type="module">
+        import { h1, p, div } from '../lib/src/simplest-v2.js';
+        import { codeBlock } from './components.js';
+        
+        console.log('Testing codeBlock...');
+        
+        h1('Code Block Test');
+        
+        codeBlock('console.log("Hello world!");');
+        
+        p('Code block should appear above this.');
+        
+        console.log('Test completed!');
+    </script>
+</body>
+</html>

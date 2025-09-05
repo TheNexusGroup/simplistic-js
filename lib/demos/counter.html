@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simplistic Counter - Reactive State Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+        import { app, h1, h2, p, div, button } from '../src/simplistic.js'
+        import { state, reactiveText } from '../src/state.js'
+
+        app(() => {
+            // Center everything
+            div({
+                center: true,
+                full: true,
+                col: true,
+                gap: 30
+            },
+                // Title
+                h1('Reactive Counter Demo', {
+                    size: 48,
+                    center: true,
+                    fadeIn: true
+                }),
+                
+                // Main counter card
+                div({
+                    bg: 'rgba(255, 255, 255, 0.1)',
+                    pad: 60,
+                    rounded: 20,
+                    center: true,
+                    col: true,
+                    gap: 30,
+                    shadow: true
+                },
+                    // Counter state
+                    (() => {
+                        const count = state(0)
+                        
+                        // Display count with reactive text
+                        div({ center: true },
+                            h2('Count: ', { 
+                                size: 32, 
+                                color: 'rgba(255,255,255,0.8)' 
+                            }),
+                            (() => {
+                                const countDisplay = document.createElement('span')
+                                countDisplay.style.fontSize = '72px'
+                                countDisplay.style.fontWeight = 'bold'
+                                countDisplay.style.color = 'white'
+                                countDisplay.style.marginLeft = '10px'
+                                
+                                // Make it reactive
+                                count.subscribe(value => {
+                                    countDisplay.textContent = value.toString()
+                                    
+                                    // Fun animation on change
+                                    countDisplay.style.transform = 'scale(1.2)'
+                                    countDisplay.style.transition = 'transform 0.2s ease'
+                                    setTimeout(() => {
+                                        countDisplay.style.transform = 'scale(1)'
+                                    }, 200)
+                                })
+                                
+                                // Initial value
+                                countDisplay.textContent = count.value.toString()
+                                
+                                document.body.lastElementChild.lastElementChild.appendChild(countDisplay)
+                                return null
+                            })()
+                        )
+                        
+                        // Buttons
+                        div({
+                            row: true,
+                            gap: 20,
+                            center: true
+                        },
+                            button('-5', {
+                                onClick: () => count.value -= 5,
+                                bg: 'rgba(239, 68, 68, 0.8)',
+                                color: 'white',
+                                pad: [15, 25],
+                                size: 18,
+                                hover: {
+                                    bg: 'rgba(239, 68, 68, 1)'
+                                }
+                            }),
+                            button('-1', {
+                                onClick: () => count.value--,
+                                bg: 'rgba(249, 115, 22, 0.8)',
+                                color: 'white',
+                                pad: [15, 25],
+                                size: 18,
+                                hover: {
+                                    bg: 'rgba(249, 115, 22, 1)'
+                                }
+                            }),
+                            button('Reset', {
+                                onClick: () => count.value = 0,
+                                bg: 'rgba(107, 114, 128, 0.8)',
+                                color: 'white',
+                                pad: [15, 25],
+                                size: 18,
+                                hover: {
+                                    bg: 'rgba(107, 114, 128, 1)'
+                                }
+                            }),
+                            button('+1', {
+                                onClick: () => count.value++,
+                                bg: 'rgba(34, 197, 94, 0.8)',
+                                color: 'white',
+                                pad: [15, 25],
+                                size: 18,
+                                hover: {
+                                    bg: 'rgba(34, 197, 94, 1)'
+                                }
+                            }),
+                            button('+5', {
+                                onClick: () => count.value += 5,
+                                bg: 'rgba(59, 130, 246, 0.8)',
+                                color: 'white',
+                                pad: [15, 25],
+                                size: 18,
+                                hover: {
+                                    bg: 'rgba(59, 130, 246, 1)'
+                                }
+                            })
+                        )
+                        
+                        // Computed values demo
+                        div({
+                            col: true,
+                            gap: 15,
+                            pad: [30, 0, 0, 0],
+                            center: true
+                        },
+                            (() => {
+                                const doubled = count.map(c => c * 2)
+                                const squared = count.map(c => c * c)
+                                const isEven = count.map(c => c % 2 === 0)
+                                
+                                // Doubled display
+                                const doubledEl = p('', { 
+                                    size: 18,
+                                    color: 'rgba(255,255,255,0.8)' 
+                                })
+                                doubled.subscribe(value => {
+                                    doubledEl.textContent = `Doubled: ${value}`
+                                })
+                                doubledEl.textContent = `Doubled: ${doubled.value}`
+                                
+                                // Squared display
+                                const squaredEl = p('', { 
+                                    size: 18,
+                                    color: 'rgba(255,255,255,0.8)' 
+                                })
+                                squared.subscribe(value => {
+                                    squaredEl.textContent = `Squared: ${value}`
+                                })
+                                squaredEl.textContent = `Squared: ${squared.value}`
+                                
+                                // Even/Odd display
+                                const evenOddEl = p('', { 
+                                    size: 18,
+                                    color: 'rgba(255,255,255,0.8)' 
+                                })
+                                isEven.subscribe(value => {
+                                    evenOddEl.textContent = `Number is: ${value ? 'Even' : 'Odd'}`
+                                })
+                                evenOddEl.textContent = `Number is: ${isEven.value ? 'Even' : 'Odd'}`
+                                
+                                return null
+                            })()
+                        )
+                        
+                        // Conditional rendering
+                        (() => {
+                            const messageEl = div({
+                                pad: [20, 0, 0, 0],
+                                center: true
+                            })
+                            
+                            count.subscribe(value => {
+                                messageEl.innerHTML = ''
+                                
+                                if (value === 0) {
+                                    const msg = p('Starting fresh! 🌟', {
+                                        size: 20,
+                                        color: '#fbbf24',
+                                        bold: true,
+                                        fadeIn: true
+                                    })
+                                    messageEl.appendChild(msg)
+                                } else if (value > 0 && value <= 10) {
+                                    const msg = p('Keep going! 🚀', {
+                                        size: 20,
+                                        color: '#34d399',
+                                        bold: true,
+                                        fadeIn: true
+                                    })
+                                    messageEl.appendChild(msg)
+                                } else if (value > 10) {
+                                    const msg = p('You\'re on fire! 🔥', {
+                                        size: 20,
+                                        color: '#f87171',
+                                        bold: true,
+                                        fadeIn: true
+                                    })
+                                    messageEl.appendChild(msg)
+                                } else if (value < 0) {
+                                    const msg = p('Going negative! ❄️', {
+                                        size: 20,
+                                        color: '#93c5fd',
+                                        bold: true,
+                                        fadeIn: true
+                                    })
+                                    messageEl.appendChild(msg)
+                                }
+                            })
+                            
+                            // Initial message
+                            const initialMsg = p('Starting fresh! 🌟', {
+                                size: 20,
+                                color: '#fbbf24',
+                                bold: true
+                            })
+                            messageEl.appendChild(initialMsg)
+                            
+                            return null
+                        })()
+                        
+                        return null
+                    })()
+                ),
+                
+                // Footer
+                p('Built with Simplistic - See how simple reactive state can be!', {
+                    center: true,
+                    color: 'rgba(255,255,255,0.6)',
+                    size: 14
+                })
+            )
+        })
+    </script>
+</body>
+</html>

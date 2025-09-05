@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Sandbox - Simplistic.js</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/theme/material-darker.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .sandbox-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            gap: 1px;
+            background: #1e293b;
+        }
+        
+        .toolbar {
+            grid-column: 1 / -1;
+            background: #1e293b;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .toolbar-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .btn {
+            background: #334155;
+            color: #e2e8f0;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            background: #475569;
+            transform: translateY(-1px);
+        }
+        
+        .btn.primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn.primary:hover {
+            background: #2563eb;
+        }
+        
+        .editor-panel {
+            background: #1e293b;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .preview-panel {
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-header {
+            padding: 15px 20px;
+            background: #334155;
+            color: #e2e8f0;
+            font-weight: 500;
+            font-size: 14px;
+            border-bottom: 1px solid #475569;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .preview-panel .panel-header {
+            background: #f8fafc;
+            color: #1f2937;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .editor-wrapper {
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .preview-wrapper {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+        
+        .CodeMirror {
+            height: 100% !important;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .tutorial-sidebar {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: #1e293b;
+            border-left: 1px solid #334155;
+            transition: right 0.3s ease;
+            z-index: 100;
+            overflow-y: auto;
+        }
+        
+        .tutorial-sidebar.open {
+            right: 0;
+        }
+        
+        .tutorial-content {
+            padding: 20px;
+        }
+        
+        .tutorial-step {
+            background: #334155;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .tutorial-step h3 {
+            color: #60a5fa;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .tutorial-step p {
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .tutorial-code {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            overflow-x: auto;
+        }
+        
+        .step-nav {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .step-nav button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .step-nav button:disabled {
+            background: #64748b;
+            cursor: not-allowed;
+        }
+        
+        .error-display {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .templates-dropdown {
+            position: relative;
+        }
+        
+        .templates-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 200px;
+            display: none;
+            z-index: 10;
+        }
+        
+        .templates-menu.show {
+            display: block;
+        }
+        
+        .template-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            color: #e2e8f0;
+            font-size: 14px;
+            transition: background 0.2s ease;
+        }
+        
+        .template-item:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body>
+    <div class="sandbox-container">
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="logo">
+                <div class="logo-icon">🚀</div>
+                <span>Simplistic.js Playground</span>
+            </div>
+            
+            <div class="toolbar-actions">
+                <button class="btn" onclick="runCode()">▶️ Run Code</button>
+                <div class="templates-dropdown">
+                    <button class="btn" onclick="toggleTemplates()">📁 Templates</button>
+                    <div class="templates-menu" id="templatesMenu">
+                        <div class="template-item" onclick="loadTemplate('hello-world')">Hello World</div>
+                        <div class="template-item" onclick="loadTemplate('counter')">Interactive Counter</div>
+                        <div class="template-item" onclick="loadTemplate('todo')">Todo List</div>
+                        <div class="template-item" onclick="loadTemplate('form')">Contact Form</div>
+                        <div class="template-item" onclick="loadTemplate('cards')">Dashboard Cards</div>
+                        <div class="template-item" onclick="loadTemplate('modal')">Modal Dialog</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="shareCode()">🔗 Share</button>
+                <button class="btn" onclick="toggleTutorial()">📚 Tutorial</button>
+                <button class="btn primary" onclick="clearCode()">🗑️ Clear</button>
+            </div>
+        </div>
+        
+        <!-- Editor Panel -->
+        <div class="editor-panel">
+            <div class="panel-header">
+                <span>Code Editor</span>
+                <div>
+                    <span id="cursor-position">Line 1, Col 1</span>
+                </div>
+            </div>
+            <div class="editor-wrapper">
+                <textarea id="code-editor"></textarea>
+            </div>
+        </div>
+        
+        <!-- Preview Panel -->
+        <div class="preview-panel">
+            <div class="panel-header">
+                <span>Live Preview</span>
+                <button class="btn" onclick="refreshPreview()">🔄 Refresh</button>
+            </div>
+            <div class="error-display" id="error-display"></div>
+            <div class="preview-wrapper" id="preview"></div>
+        </div>
+    </div>
+    
+    <!-- Tutorial Sidebar -->
+    <div class="tutorial-sidebar" id="tutorialSidebar">
+        <div class="tutorial-content">
+            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: #60a5fa;">Interactive Tutorial</h2>
+                <button class="btn" onclick="closeTutorial()" style="margin-left: auto;">✕</button>
+            </div>
+            
+            <div id="tutorial-steps"></div>
+        </div>
+    </div>
+    
+    <!-- CodeMirror JS -->
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/javascript/javascript.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/edit/closebrackets.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/edit/matchbrackets.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/selection/active-line.js"></script>
+    
+    <script type="module">
+        import { app, div, h1, h2, h3, p, button, input } from '../lib/src/simplest.js'
+        import { textarea, modal, select, table, accordion, span } from '../lib/src/extended.js'
+        import { state } from '../lib/src/state.js'
+        
+        // Make libraries globally available for user code
+        window.Simplistic = { app, div, h1, h2, h3, p, button, input, textarea, modal, select, table, accordion, span, state }
+        
+        // Initialize CodeMirror
+        const editor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
+            mode: 'javascript',
+            theme: 'material-darker',
+            lineNumbers: true,
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            styleActiveLine: true,
+            indentUnit: 2,
+            tabSize: 2,
+            lineWrapping: true
+        })
+        
+        // Update cursor position
+        editor.on('cursorActivity', () => {
+            const cursor = editor.getCursor()
+            document.getElementById('cursor-position').textContent = 
+                `Line ${cursor.line + 1}, Col ${cursor.ch + 1}`
+        })
+        
+        // Auto-run on changes (debounced)
+        let runTimeout
+        editor.on('change', () => {
+            clearTimeout(runTimeout)
+            runTimeout = setTimeout(runCode, 500)
+        })
+        
+        // Global functions
+        window.runCode = function() {
+            const code = editor.getValue()
+            const preview = document.getElementById('preview')
+            const errorDisplay = document.getElementById('error-display')
+            
+            // Clear previous content
+            preview.innerHTML = ''
+            errorDisplay.style.display = 'none'
+            
+            try {
+                // Create a sandboxed execution environment
+                const wrappedCode = `
+                    (function() {
+                        const { app, div, h1, h2, h3, p, button, input, textarea, modal, select, table, accordion, span, state } = window.Simplistic;
+                        
+                        // Clear any existing content
+                        document.getElementById('preview').innerHTML = '';
+                        
+                        // Set preview as current context
+                        const originalContext = document.body;
+                        const previewElement = document.getElementById('preview');
+                        
+                        // Temporarily override getCurrentContext
+                        const originalGetCurrentContext = window.getCurrentContext;
+                        window.getCurrentContext = () => previewElement;
+                        
+                        try {
+                            ${code}
+                        } finally {
+                            // Restore original context
+                            if (originalGetCurrentContext) {
+                                window.getCurrentContext = originalGetCurrentContext;
+                            }
+                        }
+                    })();
+                `
+                
+                // Execute the code
+                eval(wrappedCode)
+                
+            } catch (error) {
+                console.error('Code execution error:', error)
+                errorDisplay.textContent = `Error: ${error.message}`
+                errorDisplay.style.display = 'block'
+            }
+        }
+        
+        window.refreshPreview = function() {
+            runCode()
+        }
+        
+        window.clearCode = function() {
+            editor.setValue('')
+            document.getElementById('preview').innerHTML = ''
+        }
+        
+        window.shareCode = function() {
+            const code = editor.getValue()
+            const encodedCode = btoa(encodeURIComponent(code))
+            const shareUrl = `${window.location.origin}${window.location.pathname}?code=${encodedCode}`
+            
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert('Share URL copied to clipboard!')
+            }).catch(() => {
+                prompt('Copy this URL to share your code:', shareUrl)
+            })
+        }
+        
+        window.toggleTemplates = function() {
+            const menu = document.getElementById('templatesMenu')
+            menu.classList.toggle('show')
+        }
+        
+        window.toggleTutorial = function() {
+            const sidebar = document.getElementById('tutorialSidebar')
+            sidebar.classList.toggle('open')
+            
+            // Initialize tutorial if first time opening
+            if (sidebar.classList.contains('open') && !window.tutorialInitialized) {
+                initializeTutorial()
+                window.tutorialInitialized = true
+            }
+        }
+        
+        window.closeTutorial = function() {
+            document.getElementById('tutorialSidebar').classList.remove('open')
+        }
+        
+        window.loadTemplate = function(templateName) {
+            const templates = {
+                'hello-world': `// Hello World Example
+app(() => {
+    div({ center: true, col: true, gap: 20, pad: 40 },
+        h1('Hello, Simplistic! 👋', {
+            size: 36,
+            color: '#2563eb'
+        }),
+        p('Welcome to the world of natural web development!', {
+            size: 18,
+            color: '#64748b'
+        }),
+        button('Click me!', {
+            primary: true,
+            onClick: () => alert('Hello from Simplistic.js!')
+        })
+    )
+})`,
+                
+                'counter': `// Interactive Counter
+app(() => {
+    const count = state(0)
+    
+    div({ center: true, col: true, gap: 20, pad: 40 },
+        h2('Counter App', { color: '#1f2937' }),
+        
+        (() => {
+            const display = p('', { size: 24, bold: true, color: '#2563eb' })
+            count.subscribe(val => display.textContent = \`Count: \${val}\`)
+            display.textContent = \`Count: \${count.value}\`
+            return display
+        })(),
+        
+        div({ row: true, gap: 15 },
+            button('-', { 
+                onClick: () => count.value--,
+                bg: '#ef4444',
+                color: 'white',
+                pad: [10, 20],
+                rounded: 6
+            }),
+            button('Reset', { 
+                onClick: () => count.value = 0,
+                bg: '#64748b',
+                color: 'white',
+                pad: [10, 20],
+                rounded: 6
+            }),
+            button('+', { 
+                onClick: () => count.value++,
+                bg: '#10b981',
+                color: 'white',
+                pad: [10, 20],
+                rounded: 6
+            })
+        )
+    )
+})`,
+                
+                'todo': `// Todo List App
+app(() => {
+    const todos = state([
+        { id: 1, text: 'Learn Simplistic.js', done: false },
+        { id: 2, text: 'Build something cool', done: true }
+    ])
+    
+    div({ col: true, gap: 20, pad: 40, maxWidth: 500, center: true },
+        h2('My Todo List', { color: '#1f2937', center: true }),
+        
+        input({
+            placeholder: 'Add a new todo...',
+            width: '100%',
+            pad: [12, 16],
+            border: '2px solid #e5e7eb',
+            rounded: 8,
+            onEnter: (text) => {
+                if (text.trim()) {
+                    todos.push({
+                        id: Date.now(),
+                        text: text.trim(),
+                        done: false
+                    })
+                    // Clear input
+                    document.querySelector('input').value = ''
+                }
+            }
+        }),
+        
+        (() => {
+            const container = div({ col: true, gap: 10 })
+            
+            const renderTodos = () => {
+                container.innerHTML = ''
+                todos.value.forEach((todo, index) => {
+                    const todoEl = div({
+                        row: true,
+                        between: true,
+                        pad: 15,
+                        bg: todo.done ? '#f0fdf4' : '#ffffff',
+                        border: todo.done ? '2px solid #bbf7d0' : '2px solid #e5e7eb',
+                        rounded: 8,
+                        style: { transition: 'all 0.2s ease' }
+                    })
+                    
+                    const text = p(todo.text, {
+                        strike: todo.done,
+                        color: todo.done ? '#16a34a' : '#374151',
+                        margin: 0
+                    })
+                    
+                    const toggleBtn = button(todo.done ? '↩️ Undo' : '✅ Done', {
+                        bg: todo.done ? '#f59e0b' : '#22c55e',
+                        color: 'white',
+                        pad: [6, 12],
+                        rounded: 4,
+                        size: 12,
+                        onClick: () => {
+                            const newTodos = [...todos.value]
+                            newTodos[index].done = !newTodos[index].done
+                            todos.value = newTodos
+                        }
+                    })
+                    
+                    todoEl.appendChild(text)
+                    todoEl.appendChild(toggleBtn)
+                    container.appendChild(todoEl)
+                })
+            }
+            
+            todos.subscribe(renderTodos)
+            renderTodos()
+            
+            return container
+        })()
+    )
+})`,
+                
+                'form': `// Contact Form
+app(() => {
+    const formData = state({ name: '', email: '', message: '' })
+    const submitted = state(false)
+    
+    div({ center: true, col: true, gap: 30, pad: 40 },
+        h2('Contact Us', { color: '#1f2937', center: true }),
+        
+        div({ col: true, gap: 20, maxWidth: 400, bg: 'white', pad: 30, rounded: 12, shadow: true },
+            input({
+                placeholder: 'Your Name',
+                width: '100%',
+                pad: [12, 16],
+                border: '1px solid #d1d5db',
+                rounded: 6,
+                onInput: (value) => formData.value = {...formData.value, name: value}
+            }),
+            
+            input({
+                type: 'email',
+                placeholder: 'Your Email',
+                width: '100%',
+                pad: [12, 16],
+                border: '1px solid #d1d5db',
+                rounded: 6,
+                onInput: (value) => formData.value = {...formData.value, email: value}
+            }),
+            
+            textarea({
+                placeholder: 'Your Message',
+                rows: 4,
+                width: '100%',
+                pad: [12, 16],
+                border: '1px solid #d1d5db',
+                rounded: 6,
+                onInput: (value) => formData.value = {...formData.value, message: value}
+            }),
+            
+            button('Send Message', {
+                primary: true,
+                bg: '#3b82f6',
+                color: 'white',
+                width: '100%',
+                pad: [12, 24],
+                rounded: 6,
+                onClick: () => {
+                    alert(\`Thanks \${formData.value.name || 'there'}! Your message has been sent.\`)
+                    submitted.value = true
+                }
+            })
+        ),
+        
+        (() => {
+            const result = div({ center: true })
+            submitted.subscribe(isSubmitted => {
+                if (isSubmitted) {
+                    result.innerHTML = ''
+                    const success = p('✅ Message sent successfully!', {
+                        color: '#16a34a',
+                        bg: '#f0fdf4',
+                        pad: [12, 20],
+                        rounded: 6,
+                        border: '1px solid #bbf7d0'
+                    })
+                    result.appendChild(success)
+                }
+            })
+            return result
+        })()
+    )
+})`,
+                
+                'cards': `// Dashboard Cards
+app(() => {
+    const stats = [
+        { title: 'Total Users', value: '12,345', change: '+12%', icon: '👥', color: '#3b82f6' },
+        { title: 'Revenue', value: '$45,678', change: '+8%', icon: '💰', color: '#10b981' },
+        { title: 'Orders', value: '1,234', change: '+15%', icon: '📦', color: '#f59e0b' },
+        { title: 'Growth', value: '23.5%', change: '+2%', icon: '📈', color: '#8b5cf6' }
+    ]
+    
+    div({ col: true, gap: 30, pad: 40 },
+        h2('Dashboard Overview', { color: '#1f2937', center: true }),
+        
+        div({ 
+            style: {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '20px'
+            }
+        },
+            ...stats.map(stat => 
+                div({
+                    bg: 'white',
+                    pad: 25,
+                    rounded: 12,
+                    border: '1px solid #e5e7eb',
+                    hover: { 
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 8px 25px rgba(0,0,0,0.1)'
+                    },
+                    style: { 
+                        transition: 'all 0.2s ease',
+                        cursor: 'pointer'
+                    }
+                },
+                    div({ row: true, between: true, margin: [0, 0, 15, 0] },
+                        span(stat.icon, { size: 32 }),
+                        span(stat.change, {
+                            bg: '#dcfce7',
+                            color: '#166534',
+                            pad: [4, 8],
+                            rounded: 12,
+                            size: 12,
+                            bold: true
+                        })
+                    ),
+                    
+                    h3(stat.title, {
+                        margin: [0, 0, 8, 0],
+                        color: '#6b7280',
+                        size: 14
+                    }),
+                    
+                    h2(stat.value, {
+                        margin: 0,
+                        color: stat.color,
+                        size: 28,
+                        bold: true
+                    })
+                )
+            )
+        )
+    )
+})`,
+                
+                'modal': `// Modal Dialog Example
+app(() => {
+    const showModal = state(false)
+    
+    div({ center: true, col: true, gap: 30, pad: 40 },
+        h2('Modal Example', { color: '#1f2937' }),
+        
+        button('Open Modal', {
+            primary: true,
+            bg: '#3b82f6',
+            color: 'white',
+            pad: [12, 24],
+            rounded: 8,
+            onClick: () => {
+                const modalContent = div({ col: true, gap: 20 },
+                    h3('Welcome to the Modal!', { margin: 0, color: '#1f2937' }),
+                    p('This is a beautiful modal dialog created with Simplistic.js.', {
+                        color: '#6b7280',
+                        lineHeight: 1.6
+                    }),
+                    
+                    div({ row: true, gap: 15, center: true },
+                        button('Cancel', {
+                            bg: '#f3f4f6',
+                            color: '#374151',
+                            pad: [10, 20],
+                            rounded: 6
+                        }),
+                        button('Confirm', {
+                            bg: '#10b981',
+                            color: 'white',
+                            pad: [10, 20],
+                            rounded: 6,
+                            onClick: () => alert('Confirmed!')
+                        })
+                    )
+                )
+                
+                modal(modalContent, {
+                    title: 'Example Modal',
+                    size: 'medium',
+                    onClose: () => console.log('Modal closed')
+                })
+            }
+        }),
+        
+        p('Click the button above to see a modal in action!', {
+            color: '#6b7280',
+            center: true
+        })
+    )
+})`
+            }
+            
+            if (templates[templateName]) {
+                editor.setValue(templates[templateName])
+                document.getElementById('templatesMenu').classList.remove('show')
+                runCode()
+            }
+        }
+        
+        function initializeTutorial() {
+            const tutorialSteps = [
+                {
+                    title: "Welcome to Simplistic.js!",
+                    content: "Let's learn the basics of natural web development. Click 'Try It' to run your first example.",
+                    code: `app(() => {
+    h1('Hello World!', { 
+        color: '#2563eb',
+        center: true 
+    })
+})`
+                },
+                {
+                    title: "Creating Elements",
+                    content: "Elements are created with simple function calls. Try modifying the text or adding new elements.",
+                    code: `app(() => {
+    div({ center: true, col: true, gap: 20 },
+        h1('My First App'),
+        p('This is so easy!'),
+        button('Click me!')
+    )
+})`
+                },
+                {
+                    title: "Styling with Props",
+                    content: "Style your elements using natural properties like 'center', 'bg', 'pad', etc.",
+                    code: `app(() => {
+    div({ 
+        center: true,
+        bg: '#f0f9ff',
+        pad: 40,
+        rounded: 12
+    },
+        h2('Styled Container', { 
+            color: '#1e40af' 
+        }),
+        p('Beautiful styling made simple!')
+    )
+})`
+                },
+                {
+                    title: "Interactive Elements",
+                    content: "Add interactivity with onClick handlers and other event properties.",
+                    code: `app(() => {
+    div({ center: true, col: true, gap: 15 },
+        h2('Click the Button'),
+        button('Say Hello!', {
+            primary: true,
+            onClick: () => alert('Hello from Simplistic!')
+        })
+    )
+})`
+                },
+                {
+                    title: "Reactive State",
+                    content: "Use the state() function to create reactive data that automatically updates your UI.",
+                    code: `app(() => {
+    const count = state(0)
+    
+    div({ center: true, col: true, gap: 20 },
+        (() => {
+            const display = h2('Count: 0')
+            count.subscribe(val => 
+                display.textContent = \`Count: \${val}\`
+            )
+            return display
+        })(),
+        
+        button('Increment', {
+            onClick: () => count.value++
+        })
+    )
+})`
+                }
+            ]
+            
+            const stepsContainer = document.getElementById('tutorial-steps')
+            let currentStep = 0
+            
+            function renderStep(stepIndex) {
+                const step = tutorialSteps[stepIndex]
+                stepsContainer.innerHTML = `
+                    <div class="tutorial-step">
+                        <h3>Step ${stepIndex + 1}: ${step.title}</h3>
+                        <p>${step.content}</p>
+                        <div class="tutorial-code">${step.code}</div>
+                        <div class="step-nav">
+                            <button onclick="window.tryStepCode(${stepIndex})" class="btn primary">Try It</button>
+                            <button onclick="window.previousStep()" ${stepIndex === 0 ? 'disabled' : ''}>← Previous</button>
+                            <button onclick="window.nextStep()" ${stepIndex === tutorialSteps.length - 1 ? 'disabled' : ''}>Next →</button>
+                        </div>
+                        <p style="color: #94a3b8; font-size: 12px; margin-top: 15px;">
+                            Step ${stepIndex + 1} of ${tutorialSteps.length}
+                        </p>
+                    </div>
+                `
+            }
+            
+            window.tryStepCode = (stepIndex) => {
+                const step = tutorialSteps[stepIndex]
+                editor.setValue(step.code)
+                runCode()
+            }
+            
+            window.nextStep = () => {
+                if (currentStep < tutorialSteps.length - 1) {
+                    currentStep++
+                    renderStep(currentStep)
+                }
+            }
+            
+            window.previousStep = () => {
+                if (currentStep > 0) {
+                    currentStep--
+                    renderStep(currentStep)
+                }
+            }
+            
+            // Render first step
+            renderStep(0)
+        }
+        
+        // Load code from URL if present
+        const urlParams = new URLSearchParams(window.location.search)
+        const codeParam = urlParams.get('code')
+        if (codeParam) {
+            try {
+                const decodedCode = decodeURIComponent(atob(codeParam))
+                editor.setValue(decodedCode)
+                runCode()
+            } catch (e) {
+                console.error('Failed to load code from URL:', e)
+            }
+        } else {
+            // Load default example
+            loadTemplate('hello-world')
+        }
+        
+        // Close menus when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.templates-dropdown')) {
+                document.getElementById('templatesMenu').classList.remove('show')
+            }
+        })
+    </script>
+</body>
+</html>

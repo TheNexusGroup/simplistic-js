@@ -1,0 +1,18 @@
+# GitHub Pages configuration for Simplistic.js
+name: Simplistic.js
+description: Natural Web Development Syntax - Build beautiful web applications with code that reads like English
+url: https://thenexusgroup.github.io/simplistic-js
+
+# Enable GitHub Pages
+plugins:
+  - jekyll-sitemap
+  
+# Exclude files from Jekyll build
+exclude:
+  - node_modules/
+  - package.json
+  - rollup.config.js
+  - tsconfig.json
+  - .git/
+  - .github/
+  - lib/src/*.ts
